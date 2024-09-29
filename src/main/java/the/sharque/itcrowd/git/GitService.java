@@ -19,7 +19,7 @@ import the.sharque.itcrowd.chat.ChatService;
 @RequiredArgsConstructor
 public class GitService {
 
-    private static final String AUTHOR = "Roy";
+    public static final String AUTHOR = "Roy";
     private static final String GIT_HOME = "./gits/";
     private static final String NEW_PROJECT = "Looks like a new project %s";
     private static final String CLONED_WE_HAVE_IT_NOW = "New project %s cloned, we have it now.";

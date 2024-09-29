@@ -27,4 +27,10 @@ public class ChatService {
                         chatMessage.getAuthor(), chatMessage.getMessage()))
                 .toList();
     }
+
+    public String getLastMessage(String author) {
+        return chatRepository.findOneByAuthor(author)
+                .map(ChatMessage::getMessage)
+                .orElse("Doing nothing, no task");
+    }
 }
