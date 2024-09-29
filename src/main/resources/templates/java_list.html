@@ -12,6 +12,7 @@
   <table style="width:90%;" class="table border-light table-striped table-responsive-md">
     <thead>
     <tr>
+      <th>Branch ID</th>
       <th>Method name</th>
       <th>Status</th>
       <th>Action</th>
@@ -20,6 +21,7 @@
     </thead>
     <tbody>
     <tr th:each="method:${methods}">
+      <td th:text="${T(the.sharque.itcrowd.language.JuniorDev).ITCRWD+(method.getId())}"></td>
       <td th:text="${method.getMethodName()}"></td>
       <td th:text="${method.getStatus()}"></td>
       <td><a th:href="@{/java/reset/{id}(id=${method.getId()})}" class="btn btn-secondary">Reset</a></td>

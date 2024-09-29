@@ -40,6 +40,8 @@ public class JavaService {
     private final Pattern METHODS = Pattern.compile(
             "(?:(?:public|private|protected|static|final|native|synchronized|abstract|transient)+\\s+)+[,.$_\\w<>\\[\\]\\s]*\\s+(?<name>[$_\\w]+\\([^)]*\\)?)\\s*\\{?[^}]*}?",
             Pattern.DOTALL);
+    private final Pattern CLEAN_BODY = Pattern.compile("(?<body>.*}\\n?)");
+
     private final GitRepository gitRepository;
     private final JavaMethodsRepository javaMethodsRepository;
     private final ChatService chatService;
@@ -140,7 +142,7 @@ public class JavaService {
                     }
 
                     if (methodBody != null) {
-                        result.put(className + "::" + methodName, methodBody.toString());
+                        result.put(className + "::" + methodName, cleanBody(methodBody.toString()));
                     }
 
                     methodName = nextMethodName;
@@ -149,7 +151,7 @@ public class JavaService {
                 }
 
                 if (methodBody != null) {
-                    result.put(className + "::" + methodName, methodBody.toString());
+                    result.put(className + "::" + methodName, cleanBody(methodBody.toString()));
                 }
 
                 log.debug("Class {} has {} methods", className, result.size());
@@ -160,6 +162,15 @@ public class JavaService {
         }
 
         return result;
+    }
+
+    private String cleanBody(String methodBody) {
+        Matcher cleanBody = CLEAN_BODY.matcher(methodBody);
+        if (cleanBody.find()) {
+            return cleanBody.group("body");
+        }
+
+        return methodBody;
     }
 
     public List<JavaMethod> getMethods() {

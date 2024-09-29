@@ -35,6 +35,7 @@ public class JuniorDev {
 
     public static final String JAVA_REQUEST = "You are Java developer, optimize the method";
     public static final String PYTHON_REQUEST = "You are python developer, optimize the method";
+    public static final String ITCRWD = "ITCRWD-";
 
     private final OllamaApi ollamaApi;
     private final ChatService chatService;
@@ -61,7 +62,14 @@ public class JuniorDev {
                 if (matcher.find()) {
                     methodObject.setModifiedBody(matcher.group("code"));
                     methodObject.setCommitMessage(matcher.group("comment"));
-                    methodObject.setStatus(MethodsStatus.OPTIMIZED);
+
+                    if (StringSimilarity.similarity(methodObject.getOriginalBody(),
+                            methodObject.getModifiedBody()) < 0.8) {
+                        methodObject.setStatus(MethodsStatus.OPTIMIZED);
+                    } else {
+                        methodObject.setStatus(MethodsStatus.SAME);
+                    }
+
                     methodObject.setLastModified(LocalDateTime.now());
 
                     log.info("Method optimized {}", methodObject.getMethodName());
@@ -85,12 +93,8 @@ public class JuniorDev {
         ChatRequest request = ChatRequest.builder("deepseek-coder-v2")
                 .withStream(false)
                 .withMessages(List.of(
-                        Message.builder(Role.SYSTEM)
-                                .withContent(type)
-                                .build(),
-                        Message.builder(Role.USER)
-                                .withContent(methodObject.getOriginalBody())
-                                .build()))
+                        Message.builder(Role.SYSTEM).withContent(type).build(),
+                        Message.builder(Role.USER).withContent(methodObject.getOriginalBody()).build()))
                 .withOptions(OllamaOptions.create().withTemperature(0.5f))
                 .build();
 
@@ -121,7 +125,7 @@ public class JuniorDev {
                 File updateFile = new File(methodObject.getFileLocation());
 
                 if (updateFile.exists() && updateFile.isFile() && updateFile.canRead() && updateFile.canWrite()) {
-                    String branchName = "ITCRWD-" + methodObject.getId();
+                    String branchName = ITCRWD + methodObject.getId();
 
                     gitService.removeBranch(gitProject, branchName);
                     String oldBranch = gitService.createBranch(gitProject, branchName);
@@ -129,8 +133,7 @@ public class JuniorDev {
                     try {
                         String content = Files.readString(updateFile.toPath());
 
-                        if (StringSimilarity.similarity(methodObject.getOriginalBody(), methodObject.getModifiedBody())
-                                < 0.9) {
+                        if (content.contains(methodObject.getOriginalBody())) {
                             content = content.replace(methodObject.getOriginalBody(), methodObject.getModifiedBody());
                             Files.write(updateFile.toPath(), content.getBytes());
                             gitService.commitChanges(gitProject, methodObject.getCommitMessage());

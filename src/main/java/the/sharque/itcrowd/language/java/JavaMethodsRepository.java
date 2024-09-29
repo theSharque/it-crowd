@@ -16,6 +16,6 @@ public interface JavaMethodsRepository extends CrudRepository<JavaMethod, Long>,
     @Query("SELECT * FROM JAVA_METHODS WHERE STATUS = :status ORDER BY LAST_MODIFIED LIMIT 1")
     Optional<JavaMethod> findByStatus(MethodsStatus status);
 
-    @Query("SELECT * FROM JAVA_METHODS ORDER BY LAST_MODIFIED DESC")
+    @Query("SELECT * FROM JAVA_METHODS ORDER BY LAST_MODIFIED")
     List<JavaMethod> findAllOrderByLastModifiedDesc();
 }

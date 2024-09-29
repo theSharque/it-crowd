@@ -16,6 +16,6 @@ public interface PythonMethodsRepository extends CrudRepository<PythonMethod, Lo
     @Query("SELECT * FROM PYTHON_METHODS WHERE STATUS = :status ORDER BY LAST_MODIFIED LIMIT 1")
     Optional<PythonMethod> findByStatus(MethodsStatus status);
 
-    @Query("SELECT * FROM PYTHON_METHODS ORDER BY LAST_MODIFIED DESC")
+    @Query("SELECT * FROM PYTHON_METHODS ORDER BY LAST_MODIFIED")
     List<PythonMethod> findAllOrderByLastModifiedDesc();
 }
