@@ -20,7 +20,6 @@ import the.sharque.itcrowd.chat.ChatService;
 @RequiredArgsConstructor
 public class JuniorDev {
 
-    private static final String AUTHOR = "Moss";
     public static final String START_OPTIMIZE = "Hmmm... I think I can optimize this method %s";
     public static final String BAD_OPTIMIZE = "Something went wrong with %s, I think better rollback all this shit-code";
     public static final String GOOD_OPTIMIZE = "All good, I've finished this task with %s";
@@ -34,7 +33,7 @@ public class JuniorDev {
     private final OllamaApi ollamaApi;
     private final ChatService chatService;
 
-    public <T extends MethodObject> void getToWork(MethodRepository<T> methodRepository, String type) {
+    public <T extends MethodObject> void getToWork(MethodRepository<T> methodRepository, String type, String author) {
         methodRepository.findByStatus(MethodsStatus.NEW).ifPresent(methodObject -> {
             methodObject.setStatus(MethodsStatus.IN_PROGRESS);
             methodObject.setLastModified(LocalDateTime.now());
@@ -46,7 +45,7 @@ public class JuniorDev {
             }
 
             log.info("Ask junior to optimize the method: {}", methodObject.getMethodName());
-            chatService.writeToChat(AUTHOR, START_OPTIMIZE.formatted(methodObject.getMethodName()));
+            chatService.writeToChat(author, START_OPTIMIZE.formatted(methodObject.getMethodName()));
 
             String answer = askJunior(methodObject, type);
             if (answer != null) {
@@ -58,7 +57,7 @@ public class JuniorDev {
                     methodObject.setLastModified(LocalDateTime.now());
 
                     log.info("Method optimized {}", methodObject.getMethodName());
-                    chatService.writeToChat(AUTHOR, GOOD_OPTIMIZE.formatted(methodObject.getMethodName()));
+                    chatService.writeToChat(author, GOOD_OPTIMIZE.formatted(methodObject.getMethodName()));
 
                     methodRepository.save(methodObject);
                 } else {
@@ -66,7 +65,7 @@ public class JuniorDev {
                     methodObject.setLastModified(LocalDateTime.now());
 
                     log.info("Method optimization failed {}", methodObject.getMethodName());
-                    chatService.writeToChat(AUTHOR, BAD_OPTIMIZE.formatted(methodObject.getMethodName()));
+                    chatService.writeToChat(author, BAD_OPTIMIZE.formatted(methodObject.getMethodName()));
 
                     methodRepository.save(methodObject);
                 }

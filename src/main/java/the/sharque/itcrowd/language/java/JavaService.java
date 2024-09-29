@@ -85,7 +85,7 @@ public class JavaService {
             try (Stream<Path> stream = Files.walk(directory.toPath())) {
                 files = stream.map(Path::toString)
                         .filter(string -> string.endsWith(".java"))
-                        .peek(fileName -> log.info("Found file {}", fileName))
+                        .peek(fileName -> log.debug("Found file {}", fileName))
                         .toList();
             } catch (IOException e) {
                 chatService.writeToChat(AUTHOR, FILE_PROBLEM.formatted(e.getMessage()));
@@ -130,7 +130,7 @@ public class JavaService {
                     }
 
                     if (methodBody != null) {
-                        result.put(className + "." + methodName, methodBody.toString());
+                        result.put(className + "::" + methodName, methodBody.toString());
                     }
 
                     methodName = nextMethodName;
@@ -139,10 +139,10 @@ public class JavaService {
                 }
 
                 if (methodBody != null) {
-                    result.put(className + "." + methodName, methodBody.toString());
+                    result.put(className + "::" + methodName, methodBody.toString());
                 }
 
-                log.info("Class {} has {} methods", className, result.size());
+                log.debug("Class {} has {} methods", className, result.size());
             } catch (IOException e) {
                 chatService.writeToChat(AUTHOR, METHOD_PROBLEM.formatted(e.getMessage()));
                 throw new RuntimeException(e);
@@ -158,6 +158,6 @@ public class JavaService {
 
     @Scheduled(fixedDelay = 60000)
     public void checkBody() {
-        juniorDev.getToWork(javaMethodsRepository, JAVA_REQUEST);
+        juniorDev.getToWork(javaMethodsRepository, JAVA_REQUEST, AUTHOR);
     }
 }

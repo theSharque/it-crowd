@@ -81,7 +81,7 @@ public class PythonService {
             try (Stream<Path> stream = Files.walk(directory.toPath())) {
                 files = stream.map(Path::toString)
                         .filter(string -> string.endsWith(".py"))
-                        .peek(fileName -> log.info("Found file {}", fileName))
+                        .peek(fileName -> log.debug("Found file {}", fileName))
                         .toList();
             } catch (IOException e) {
                 chatService.writeToChat(AUTHOR, FILE_PROBLEM.formatted(e.getMessage()));
@@ -117,7 +117,7 @@ public class PythonService {
                     }
 
                     if (methodBody != null) {
-                        result.put(fileName + "." + methodName, methodBody.toString());
+                        result.put(fileName + "::" + methodName, methodBody.toString());
                     }
 
                     methodName = nextMethodName;
@@ -126,10 +126,10 @@ public class PythonService {
                 }
 
                 if (methodBody != null) {
-                    result.put(fileName + "." + methodName, methodBody.toString());
+                    result.put(fileName + "::" + methodName, methodBody.toString());
                 }
 
-                log.info("File {} has {} Functions", fileName, result.size());
+                log.debug("File {} has {} Functions", fileName, result.size());
             } catch (IOException e) {
                 chatService.writeToChat(AUTHOR, METHOD_PROBLEM.formatted(e.getMessage()));
                 throw new RuntimeException(e);
@@ -145,6 +145,6 @@ public class PythonService {
 
     @Scheduled(fixedDelay = 60000)
     public void checkBody() {
-        juniorDev.getToWork(pythonMethodsRepository, PYTHON_REQUEST);
+        juniorDev.getToWork(pythonMethodsRepository, PYTHON_REQUEST, AUTHOR);
     }
 }
