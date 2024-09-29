@@ -6,7 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import the.sharque.itcrowd.chat.ChatService;
 import the.sharque.itcrowd.git.GitService;
-import the.sharque.itcrowd.java_finder.JavaService;
+import the.sharque.itcrowd.java.JavaService;
 
 @Controller
 @RequiredArgsConstructor

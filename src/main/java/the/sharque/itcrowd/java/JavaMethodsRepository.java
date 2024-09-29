@@ -1,4 +1,4 @@
-package the.sharque.itcrowd.java_finder;
+package the.sharque.itcrowd.java;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package the.sharque.itcrowd.java_finder;
+package the.sharque.itcrowd.java;
 
 public enum JavaMethodsStatus {
     NEW,
