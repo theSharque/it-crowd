@@ -6,5 +6,6 @@ public enum MethodsStatus {
     IN_PROGRESS,
     OPTIMIZED,
     PUSHED,
+    SAME,
     FAILED,
 }

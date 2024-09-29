@@ -128,11 +128,20 @@ public class JuniorDev {
 
                     try {
                         String content = Files.readString(updateFile.toPath());
-                        content = content.replace(methodObject.getOriginalBody(), methodObject.getModifiedBody());
-                        Files.write(updateFile.toPath(), content.getBytes());
 
-                        gitService.commitChanges(gitProject, methodObject.getCommitMessage());
-                        gitService.pushBranch(gitProject);
+                        if (StringSimilarity.similarity(methodObject.getOriginalBody(), methodObject.getModifiedBody())
+                                < 0.9) {
+                            content = content.replace(methodObject.getOriginalBody(), methodObject.getModifiedBody());
+                            Files.write(updateFile.toPath(), content.getBytes());
+                            gitService.commitChanges(gitProject, methodObject.getCommitMessage());
+                            gitService.pushBranch(gitProject);
+
+                            methodObject.setStatus(MethodsStatus.PUSHED);
+                        } else {
+                            methodObject.setStatus(MethodsStatus.SAME);
+                        }
+
+                        gitService.checkOutBranch(gitProject, oldBranch);
                         gitService.removeBranch(gitProject, branchName);
                     } catch (IOException e) {
                         methodObject.setStatus(MethodsStatus.FAILED);
@@ -140,13 +149,10 @@ public class JuniorDev {
                         throw new RuntimeException(e);
                     }
 
-                    gitService.checkOutBranch(gitProject, oldBranch);
-
                     gitProject.setStatus(GitStatus.READY);
                     gitRepository.save(gitProject);
                 }
             });
-            methodObject.setStatus(MethodsStatus.PUSHED);
             methodRepository.save(methodObject);
         });
     }
