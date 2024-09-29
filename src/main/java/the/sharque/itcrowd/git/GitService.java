@@ -139,7 +139,7 @@ public class GitService {
 
     public void resetStatus(Long id) {
         gitRepository.findById(id).ifPresent(gitProject -> {
-            gitProject.setStatus(GitStatus.IN_PROGRESS);
+            gitProject.setStatus(GitStatus.NEW);
             gitRepository.save(gitProject);
         });
     }
