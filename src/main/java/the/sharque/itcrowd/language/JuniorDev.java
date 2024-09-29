@@ -103,7 +103,7 @@ public class JuniorDev {
                 return response.message().content();
             }
         } catch (RuntimeException e) {
-            log.error("Ollama error", e);
+            log.error("Ollama error {}", e.getMessage());
         }
 
         return null;
