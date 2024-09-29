@@ -20,6 +20,7 @@ public class PythonMethod implements MethodObject {
     @Id
     private Long id;
     private Long gitId;
+    private String fileLocation;
     private String methodName;
     private String originalBody;
     private String hash;

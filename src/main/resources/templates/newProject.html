@@ -10,13 +10,45 @@
 <div class="container my-2" style="align-content: center;">
   <h3>Add new GIT repository</h3>
   <form th:href="@{/add}" method="post">
-    <label for="name">Name</label>
-    <input id="name" name="name" th:type="String">
-
-    <label for="url">Url of git repository</label>
-    <input id="url" name="url" th:type="String">
-
-    <button type="submit" class="btn btn-primary btn-sm mb-3">Add</button>
+    <table class="table">
+      <tr>
+        <td>
+          <label for="name">Name</label>
+        </td>
+        <td>
+          <input id="name" name="name" type="text">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="url">Url of git repository</label>
+        </td>
+        <td>
+          <input id="url" name="url" type="url">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="username">Username</label>
+        </td>
+        <td>
+          <input id="username" name="username" type="text">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <label for="password">Password</label>
+        </td>
+        <td>
+          <input id="password" name="password" type="password">
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <button type="submit" class="btn btn-primary btn-sm mb-3">Add</button>
+        </td>
+      </tr>
+    </table>
   </form>
 </div>
 </body>

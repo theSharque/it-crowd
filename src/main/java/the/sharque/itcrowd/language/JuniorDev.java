@@ -53,7 +53,7 @@ public class JuniorDev {
                 if (matcher.find()) {
                     methodObject.setModifiedBody(matcher.group("code"));
                     methodObject.setCommitMessage(matcher.group("comment"));
-                    methodObject.setStatus(MethodsStatus.CHECKED);
+                    methodObject.setStatus(MethodsStatus.OPTIMIZED);
                     methodObject.setLastModified(LocalDateTime.now());
 
                     log.info("Method optimized {}", methodObject.getMethodName());

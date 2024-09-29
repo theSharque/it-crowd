@@ -3,6 +3,8 @@ CREATE TABLE GITS
     id            serial PRIMARY KEY,
     name          varchar   not null,
     url           varchar   not null,
+    username      varchar,
+    password      varchar,
     hash          varchar,
     location      varchar,
     token         varchar,
@@ -14,6 +16,7 @@ CREATE TABLE JAVA_METHODS
 (
     id             serial PRIMARY KEY,
     git_id         bigint REFERENCES GITS (id),
+    file_location  varchar   not null,
     method_name    varchar   not null,
     original_body  varchar   not null,
     hash           varchar   not null,
@@ -27,6 +30,7 @@ CREATE TABLE PYTHON_METHODS
 (
     id             serial PRIMARY KEY,
     git_id         bigint REFERENCES GITS (id),
+    file_location  varchar   not null,
     method_name    varchar   not null,
     original_body  varchar   not null,
     hash           varchar   not null,

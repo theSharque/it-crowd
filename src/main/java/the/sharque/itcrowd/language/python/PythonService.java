@@ -21,6 +21,7 @@ import org.springframework.util.DigestUtils;
 import the.sharque.itcrowd.chat.ChatService;
 import the.sharque.itcrowd.git.GitProject;
 import the.sharque.itcrowd.git.GitRepository;
+import the.sharque.itcrowd.git.GitService;
 import the.sharque.itcrowd.git.GitStatus;
 import the.sharque.itcrowd.language.JuniorDev;
 import the.sharque.itcrowd.language.MethodsStatus;
@@ -40,27 +41,28 @@ public class PythonService {
     private final PythonMethodsRepository pythonMethodsRepository;
     private final ChatService chatService;
     private final JuniorDev juniorDev;
+    private final GitService gitService;
 
     @Scheduled(fixedDelay = 10000)
     public void loadMethods() {
-        gitRepository.findOneByStatus(GitStatus.CLONED).ifPresent(gitProject -> {
+        gitRepository.findOneByStatus(GitStatus.READY).ifPresent(gitProject -> {
             gitProject.setStatus(GitStatus.IN_PROGRESS);
             gitRepository.save(gitProject);
 
             List<String> files = findPythonFunctions(gitProject);
 
             List<PythonMethod> methods = files.stream()
-                    .map(this::findMethods)
-                    .flatMap(stringStringMap -> stringStringMap.entrySet().stream())
-                    .map(stringStringEntry -> PythonMethod.builder()
-                            .gitId(gitProject.getId())
-                            .status(MethodsStatus.NEW)
-                            .methodName(stringStringEntry.getKey())
-                            .originalBody(stringStringEntry.getValue())
-                            .hash(DigestUtils.md5DigestAsHex(stringStringEntry.getValue().getBytes()).toUpperCase())
-                            .build())
-                    .filter(javaMethod -> !pythonMethodsRepository.existsByGitIdAndMethodNameAndHash(
-                            gitProject.getId(), javaMethod.getMethodName(), javaMethod.getHash()))
+                    .flatMap(fileName -> findMethods(fileName).entrySet().stream()
+                            .map(stringStringEntry -> PythonMethod.builder()
+                                    .gitId(gitProject.getId())
+                                    .status(MethodsStatus.NEW)
+                                    .fileLocation(fileName)
+                                    .methodName(stringStringEntry.getKey())
+                                    .originalBody(stringStringEntry.getValue())
+                                    .hash(DigestUtils.md5DigestAsHex(stringStringEntry.getValue().getBytes()))
+                                    .build())
+                            .filter(javaMethod -> !pythonMethodsRepository.existsByGitIdAndMethodNameAndHash(
+                                    gitProject.getId(), javaMethod.getMethodName(), javaMethod.getHash())))
                     .toList();
 
             if (!methods.isEmpty()) {
@@ -68,7 +70,7 @@ public class PythonService {
                 pythonMethodsRepository.saveAll(methods);
             }
 
-            gitProject.setStatus(GitStatus.CLONED);
+            gitProject.setStatus(GitStatus.READY);
             gitRepository.save(gitProject);
         });
     }
@@ -146,5 +148,45 @@ public class PythonService {
     @Scheduled(fixedDelay = 60000)
     public void checkBody() {
         juniorDev.getToWork(pythonMethodsRepository, PYTHON_REQUEST, AUTHOR);
+    }
+
+    @Scheduled(fixedDelay = 10000)
+    public void pushUpdate() {
+        pythonMethodsRepository.findByStatus(MethodsStatus.OPTIMIZED).ifPresent(pythonMethod -> {
+            pythonMethod.setStatus(MethodsStatus.IN_PROGRESS);
+            pythonMethodsRepository.save(pythonMethod);
+
+            gitRepository.findById(pythonMethod.getGitId()).ifPresent(gitProject -> {
+                gitProject.setStatus(GitStatus.IN_PROGRESS);
+                gitRepository.save(gitProject);
+
+                File updateFile = new File(pythonMethod.getFileLocation());
+
+                if (updateFile.exists() && updateFile.isFile() && updateFile.canRead() && updateFile.canWrite()) {
+                    String taskId = "ITCRWD-" + pythonMethod.getId();
+                    String oldBranch = gitService.createBranch(gitProject, taskId);
+
+                    try {
+                        String content = Files.readString(updateFile.toPath());
+                        content = content.replace(pythonMethod.getOriginalBody(), pythonMethod.getModifiedBody());
+                        Files.write(updateFile.toPath(), content.getBytes());
+
+                        gitService.commitChanges(gitProject, pythonMethod.getCommitMessage());
+                        gitService.pushBranch(gitProject);
+                    } catch (IOException e) {
+                        pythonMethod.setStatus(MethodsStatus.FAILED);
+                        pythonMethodsRepository.save(pythonMethod);
+                        throw new RuntimeException(e);
+                    }
+
+                    gitService.checkOutBranch(gitProject, oldBranch);
+
+                    gitProject.setStatus(GitStatus.READY);
+                    gitRepository.save(gitProject);
+                }
+            });
+            pythonMethod.setStatus(MethodsStatus.PUSHED);
+            pythonMethodsRepository.save(pythonMethod);
+        });
     }
 }

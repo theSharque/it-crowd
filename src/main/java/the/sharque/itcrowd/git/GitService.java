@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import the.sharque.itcrowd.chat.ChatService;
@@ -41,12 +43,14 @@ public class GitService {
     public void checkNewProject() {
         gitRepository.findOneByStatus(GitStatus.NEW).ifPresent(gitProject -> {
             gitProject.setStatus(GitStatus.IN_PROGRESS);
+            gitProject.setLastModified(LocalDateTime.now());
             chatService.writeToChat(AUTHOR, NEW_PROJECT.formatted(gitProject.getName()));
             gitRepository.save(gitProject);
 
             gitProject = cloneNewGit(gitProject);
 
-            gitProject.setStatus(GitStatus.CLONED);
+            gitProject.setStatus(GitStatus.READY);
+            gitProject.setLastModified(LocalDateTime.now());
             chatService.writeToChat(AUTHOR, CLONED_WE_HAVE_IT_NOW.formatted(gitProject.getName()));
             gitRepository.save(gitProject);
         });
@@ -55,8 +59,12 @@ public class GitService {
     public GitProject cloneNewGit(GitProject gitProject) {
         createHome();
 
+        CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(gitProject.getUsername(),
+                gitProject.getPassword());
+
         try (Git git = Git.cloneRepository()
                 .setURI(gitProject.getUrl())
+                .setCredentialsProvider(credentialsProvider)
                 .setDirectory(new File(GIT_HOME + gitProject.getName()))
                 .call()) {
             log.info("Cloned git repository {} with {}", gitProject.getName(),
@@ -68,6 +76,9 @@ public class GitService {
 
             return gitProject;
         } catch (GitAPIException | IOException e) {
+            gitProject.setStatus(GitStatus.FAILED);
+            gitProject.setLastModified(LocalDateTime.now());
+            gitRepository.save(gitProject);
             chatService.writeToChat(AUTHOR, PROJECT_TROUBLE.formatted(gitProject.getName(), e.getMessage()));
             throw new RuntimeException(e);
         }
@@ -75,8 +86,9 @@ public class GitService {
 
     @Scheduled(fixedRate = 5000)
     public void checkUpdateProject() {
-        gitRepository.findOneByStatus(GitStatus.CLONED).ifPresent(gitProject -> {
+        gitRepository.findOneByStatus(GitStatus.READY).ifPresent(gitProject -> {
             gitProject.setStatus(GitStatus.IN_PROGRESS);
+            gitProject.setLastModified(LocalDateTime.now());
             gitRepository.save(gitProject);
 
             if (gitProject.getLastModified().isAfter(LocalDateTime.now().plusHours(1))) {
@@ -85,7 +97,8 @@ public class GitService {
                 chatService.writeToChat(AUTHOR, PROJECT_UPDATED.formatted(gitProject.getName()));
             }
 
-            gitProject.setStatus(GitStatus.CLONED);
+            gitProject.setStatus(GitStatus.READY);
+            gitProject.setLastModified(LocalDateTime.now());
             gitRepository.save(gitProject);
         });
     }
@@ -99,6 +112,9 @@ public class GitService {
 
             return gitProject;
         } catch (IOException e) {
+            gitProject.setStatus(GitStatus.FAILED);
+            gitProject.setLastModified(LocalDateTime.now());
+            gitRepository.save(gitProject);
             chatService.writeToChat(AUTHOR, PROJECT_PROBLEM.formatted(gitProject.getName(), e.getMessage()));
             throw new RuntimeException(e);
         }
@@ -138,6 +154,58 @@ public class GitService {
                 chatService.writeToChat(AUTHOR, WE_ARE_HOMELESS_NOW);
                 log.error("Failed to create git home directory");
             }
+        }
+    }
+
+    public String createBranch(GitProject gitProject, String taskId) {
+        try (Git git = Git.open(new File(gitProject.getLocation()))) {
+            String oldBranch = git.getRepository().getBranch();
+
+            git.checkout().setName(taskId).setCreateBranch(true).call();
+
+            return oldBranch;
+        } catch (GitAPIException | IOException e) {
+            gitProject.setStatus(GitStatus.FAILED);
+            gitProject.setLastModified(LocalDateTime.now());
+            gitRepository.save(gitProject);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void commitChanges(GitProject gitProject, String comment) {
+        try (Git git = Git.open(new File(gitProject.getLocation()))) {
+            git.add().addFilepattern(".").call();
+            git.commit().setMessage(comment).call();
+        } catch (GitAPIException | IOException e) {
+            gitProject.setStatus(GitStatus.FAILED);
+            gitProject.setLastModified(LocalDateTime.now());
+            gitRepository.save(gitProject);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void pushBranch(GitProject gitProject) {
+        CredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(gitProject.getUsername(),
+                gitProject.getPassword());
+
+        try (Git git = Git.open(new File(gitProject.getLocation()))) {
+            git.push().setCredentialsProvider(credentialsProvider).call();
+        } catch (GitAPIException | IOException e) {
+            gitProject.setStatus(GitStatus.FAILED);
+            gitProject.setLastModified(LocalDateTime.now());
+            gitRepository.save(gitProject);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void checkOutBranch(GitProject gitProject, String branchName) {
+        try (Git git = Git.open(new File(gitProject.getLocation()))) {
+            git.checkout().setName(branchName).call();
+        } catch (GitAPIException | IOException e) {
+            gitProject.setStatus(GitStatus.FAILED);
+            gitProject.setLastModified(LocalDateTime.now());
+            gitRepository.save(gitProject);
+            throw new RuntimeException(e);
         }
     }
 }

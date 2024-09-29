@@ -1,21 +1,39 @@
 # it-crowd
 
-Project starts like a Just For Fun pet-project : )
+## Raw installation
+1. You need ollama installed https://ollama.com/download
+2. Pull deepseek-coder-v2 use command `ollama pull deepseek-coder-v2:latest`
+3. You need to have Java-17
+4. Run the code
 
-Currently available modules:
+## Docker run
+Under construction
+
+## Docker-compose run
+Under construction
+
+## Description
+Project starts like a Just For Fun pet-project :) This IT-crowd will work for you for free, well almost for free.
+
+### Currently available modules:
 * Project (git) module - allow to download source code from remote GIT
 * Java Junior dev - create an optimized version for each method bigger than 5 rows
 * Add internal chat (actually just a log on the screen)
 * Support for Python
-
-Future plan:
 * Generate new branch and create a commit with message
-* Push PR/MR to review
+* Push branch to review
+
+### Future plan:
+* Create single-installation dockerfile
+* Create docker-compose module file
 * Support for JavaScript / TypeScript
 * Add QA junior unit-test writer
 
-Used:
+# Used:
 * https://github.com/ollama/ollama
 * Spring boot
 * JGit
 * Magic
+* Love
+* Coffee
+* Chocolate

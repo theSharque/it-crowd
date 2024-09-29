@@ -47,24 +47,24 @@ public class JavaService {
 
     @Scheduled(fixedDelay = 10000)
     public void loadMethods() {
-        gitRepository.findOneByStatus(GitStatus.CLONED).ifPresent(gitProject -> {
+        gitRepository.findOneByStatus(GitStatus.READY).ifPresent(gitProject -> {
             gitProject.setStatus(GitStatus.IN_PROGRESS);
             gitRepository.save(gitProject);
 
             List<String> files = findJavaFiles(gitProject);
 
             List<JavaMethod> methods = files.stream()
-                    .map(this::findMethods)
-                    .flatMap(stringStringMap -> stringStringMap.entrySet().stream())
-                    .map(stringStringEntry -> JavaMethod.builder()
-                            .gitId(gitProject.getId())
-                            .status(MethodsStatus.NEW)
-                            .methodName(stringStringEntry.getKey())
-                            .originalBody(stringStringEntry.getValue())
-                            .hash(DigestUtils.md5DigestAsHex(stringStringEntry.getValue().getBytes()).toUpperCase())
-                            .build())
-                    .filter(javaMethod -> !javaMethodsRepository.existsByGitIdAndMethodNameAndHash(
-                            gitProject.getId(), javaMethod.getMethodName(), javaMethod.getHash()))
+                    .flatMap(fileName -> findMethods(fileName).entrySet().stream()
+                            .map(stringStringEntry -> JavaMethod.builder()
+                                    .gitId(gitProject.getId())
+                                    .status(MethodsStatus.NEW)
+                                    .fileLocation(fileName)
+                                    .methodName(stringStringEntry.getKey())
+                                    .originalBody(stringStringEntry.getValue())
+                                    .hash(DigestUtils.md5DigestAsHex(stringStringEntry.getValue().getBytes()))
+                                    .build())
+                            .filter(javaMethod -> !javaMethodsRepository.existsByGitIdAndMethodNameAndHash(
+                                    gitProject.getId(), javaMethod.getMethodName(), javaMethod.getHash())))
                     .toList();
 
             if (!methods.isEmpty()) {
@@ -72,7 +72,7 @@ public class JavaService {
                 javaMethodsRepository.saveAll(methods);
             }
 
-            gitProject.setStatus(GitStatus.CLONED);
+            gitProject.setStatus(GitStatus.READY);
             gitRepository.save(gitProject);
         });
     }
