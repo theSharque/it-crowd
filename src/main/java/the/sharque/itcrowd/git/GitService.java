@@ -164,13 +164,27 @@ public class GitService {
         }
     }
 
-    public String createBranch(GitProject gitProject, String taskId) {
+    public String createBranch(GitProject gitProject, String branchName) {
         try (Git git = Git.open(new File(gitProject.getLocation()))) {
             String oldBranch = git.getRepository().getBranch();
 
-            git.checkout().setName(taskId).setCreateBranch(true).call();
+            removeBranch(gitProject, branchName);
+            git.checkout().setName(branchName).setCreateBranch(true).call();
 
             return oldBranch;
+        } catch (GitAPIException | IOException e) {
+            gitProject.setStatus(GitStatus.FAILED);
+            gitProject.setLastModified(LocalDateTime.now());
+            gitRepository.save(gitProject);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void removeBranch(GitProject gitProject, String branchName) {
+        try (Git git = Git.open(new File(gitProject.getLocation()))) {
+            if (git.branchList().call().stream().anyMatch(ref -> ref.getName().endsWith(branchName))) {
+                git.branchDelete().setBranchNames(branchName).setForce(true).call();
+            }
         } catch (GitAPIException | IOException e) {
             gitProject.setStatus(GitStatus.FAILED);
             gitProject.setLastModified(LocalDateTime.now());

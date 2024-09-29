@@ -163,8 +163,10 @@ public class PythonService {
                 File updateFile = new File(pythonMethod.getFileLocation());
 
                 if (updateFile.exists() && updateFile.isFile() && updateFile.canRead() && updateFile.canWrite()) {
-                    String taskId = "ITCRWD-" + pythonMethod.getId();
-                    String oldBranch = gitService.createBranch(gitProject, taskId);
+                    String branchName = "ITCRWD-" + pythonMethod.getId();
+
+                    gitService.removeBranch(gitProject, branchName);
+                    String oldBranch = gitService.createBranch(gitProject, branchName);
 
                     try {
                         String content = Files.readString(updateFile.toPath());
@@ -173,6 +175,7 @@ public class PythonService {
 
                         gitService.commitChanges(gitProject, pythonMethod.getCommitMessage());
                         gitService.pushBranch(gitProject);
+                        gitService.removeBranch(gitProject, branchName);
                     } catch (IOException e) {
                         pythonMethod.setStatus(MethodsStatus.FAILED);
                         pythonMethodsRepository.save(pythonMethod);
