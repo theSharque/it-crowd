@@ -1,9 +1,5 @@
 package the.sharque.itcrowd.git;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -12,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import the.sharque.itcrowd.java_finder.JavaService;
 
 @Slf4j
 @Controller
@@ -20,48 +15,27 @@ import the.sharque.itcrowd.java_finder.JavaService;
 public class GitController {
 
     private final GitService gitService;
-    private final JavaService javaService;
 
-    @GetMapping
+    @GetMapping("/git")
     public String getList(Model model) {
         model.addAttribute("projects", gitService.getProjects());
         return "projects";
     }
 
-    @GetMapping("/add")
-    public String addView(Model model) {
+    @GetMapping("/git/add")
+    public String addView() {
         return "newProject";
     }
 
-    @PostMapping(value = "/add")
+    @PostMapping(value = "/git/add")
     public String addProject(@ModelAttribute GitProject gitProject) {
         gitService.addProject(gitProject);
-        return "redirect:/";
+        return "redirect:/git";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteProject(Model model, @PathVariable Long id) {
+    @GetMapping("/git/delete/{id}")
+    public String deleteProject(@PathVariable Long id) {
         gitService.deleteProject(id);
-        return "redirect:/";
-    }
-
-    @GetMapping("/test")
-    public String test(Model model) {
-
-        GitProject gitProject = GitProject.builder()
-                .name("ostm")
-                .url("https://github.com/ostm")
-                .build();
-
-        gitProject = gitService.updateGit(gitProject);
-        List<String> files = javaService.findJavaFiles(gitProject);
-
-        Map<String, String> methods = files.stream()
-                .map(javaService::findMethods)
-                .flatMap(stringStringMap -> stringStringMap.entrySet().stream())
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-
-        log.info(methods.toString());
-        return "test";
+        return "redirect:/git";
     }
 }

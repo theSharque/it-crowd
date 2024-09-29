@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaApi.ChatRequest;
@@ -13,23 +14,26 @@ import org.springframework.ai.ollama.api.OllamaApi.Message.Role;
 import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import the.sharque.itcrowd.chat.ChatService;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class JavaJunior {
+
+    private static final String AUTHOR = "Moss";
+    private static final String START_OPTIMIZE = "Hmmm... I think I can optimize this method %s";
+    private static final String BAD_OPTIMIZE = "Something went wrong with %s, I think better rollback all this shit-code";
+    private static final String GOOD_OPTIMIZE = "All good, I've finished this task with %s";
 
     private static final Pattern PARSE_RESPONSE = Pattern.compile(
             "(?<text>.*)```.*?\\n(?<code>.*)```.*?\\n*(?<comment>.*)", Pattern.DOTALL);
 
     private final JavaMethodsRepository javaMethodsRepository;
     private final OllamaApi ollamaApi;
+    private final ChatService chatService;
 
-    public JavaJunior(JavaMethodsRepository javaMethodsRepository, OllamaApi ollamaApi) {
-        this.javaMethodsRepository = javaMethodsRepository;
-        this.ollamaApi = ollamaApi;
-    }
-
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 60000)
     public void checkBody() {
         javaMethodsRepository.findByStatus(JavaMethodsStatus.NEW).ifPresent(javaMethod -> {
             javaMethod.setStatus(JavaMethodsStatus.IN_PROGRESS);
@@ -42,6 +46,7 @@ public class JavaJunior {
             }
 
             log.info("Ask junior to optimize the method: {}", javaMethod.getMethodName());
+            chatService.writeToChat(AUTHOR, START_OPTIMIZE.formatted(javaMethod.getMethodName()));
 
             String answer = askJunior(javaMethod);
             if (answer != null) {
@@ -53,6 +58,7 @@ public class JavaJunior {
                     javaMethod.setLastModified(LocalDateTime.now());
 
                     log.info("Method optimized {}", javaMethod.getMethodName());
+                    chatService.writeToChat(AUTHOR, GOOD_OPTIMIZE.formatted(javaMethod.getMethodName()));
 
                     javaMethodsRepository.save(javaMethod);
                 } else {
@@ -60,6 +66,7 @@ public class JavaJunior {
                     javaMethod.setLastModified(LocalDateTime.now());
 
                     log.info("Method optimization failed {}", javaMethod.getMethodName());
+                    chatService.writeToChat(AUTHOR, BAD_OPTIMIZE.formatted(javaMethod.getMethodName()));
 
                     javaMethodsRepository.save(javaMethod);
                 }

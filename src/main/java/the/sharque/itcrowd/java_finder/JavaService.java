@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import the.sharque.itcrowd.chat.ChatService;
 import the.sharque.itcrowd.git.GitProject;
 import the.sharque.itcrowd.git.GitRepository;
 import the.sharque.itcrowd.git.GitStatus;
@@ -25,6 +26,11 @@ import the.sharque.itcrowd.git.GitStatus;
 @RequiredArgsConstructor
 public class JavaService {
 
+    private static final String AUTHOR = "Moss";
+    private static final String FINISHED = "I finished with %s nothing special just %d new methods";
+    private static final String FILE_PROBLEM = "Something wrong in file %s";
+    private static final String METHOD_PROBLEM = "Something wrong in method %s";
+
     private final Pattern HAS_CLASS = Pattern.compile(
             "package\\b\\s(?<package>.*?);.*?class.+?(?<name>.+?)\\b.*?\\{(?<body>.+)}.*", Pattern.DOTALL);
     private final Pattern METHODS = Pattern.compile(
@@ -32,6 +38,7 @@ public class JavaService {
             Pattern.DOTALL);
     private final GitRepository gitRepository;
     private final JavaMethodsRepository javaMethodsRepository;
+    private final ChatService chatService;
 
     @Scheduled(fixedDelay = 10000)
     public void loadMethods() {
@@ -55,7 +62,10 @@ public class JavaService {
                             gitProject.getId(), javaMethod.getMethodName(), javaMethod.getHash()))
                     .toList();
 
-            javaMethodsRepository.saveAll(methods);
+            if (!methods.isEmpty()) {
+                chatService.writeToChat(AUTHOR, FINISHED.formatted(gitProject.getName(), methods.size()));
+                javaMethodsRepository.saveAll(methods);
+            }
 
             gitProject.setStatus(GitStatus.CLONED);
             gitRepository.save(gitProject);
@@ -73,6 +83,7 @@ public class JavaService {
                         .peek(fileName -> log.info("Found file {}", fileName))
                         .toList();
             } catch (IOException e) {
+                chatService.writeToChat(AUTHOR, FILE_PROBLEM.formatted(e.getMessage()));
                 throw new RuntimeException(e);
             }
         }
@@ -128,10 +139,15 @@ public class JavaService {
 
                 log.info("Class {} has {} methods", className, result.size());
             } catch (IOException e) {
+                chatService.writeToChat(AUTHOR, METHOD_PROBLEM.formatted(e.getMessage()));
                 throw new RuntimeException(e);
             }
         }
 
         return result;
+    }
+
+    public List<JavaMethod> getMethods() {
+        return javaMethodsRepository.findAllOrderByLastModifiedDesc();
     }
 }

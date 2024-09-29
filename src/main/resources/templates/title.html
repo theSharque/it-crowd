@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>IT-Crowd :: Title</title>
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container my-2" style="align-content: center;">
+  <h3>Welcome to IT-Crowd of your own AI department</h3>
+  <a th:href="@{/chat}" class="btn btn-primary btn-sm mb-3">Check chat</a>
+  <a th:href="@{/git}" class="btn btn-primary btn-sm mb-3">Check work you your devops (Roy)</a>
+  <a th:href="@{/java}" class="btn btn-primary btn-sm mb-3">Check work of your Java junior (Moss)</a>
+</div>
+</body>
+</html>

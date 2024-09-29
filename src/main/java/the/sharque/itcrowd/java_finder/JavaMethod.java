@@ -25,5 +25,8 @@ public class JavaMethod {
     private String commitMessage;
 
     private JavaMethodsStatus status;
-    private LocalDateTime lastModified;
+    @Builder.Default
+    private LocalDateTime lastModified = LocalDateTime.now();
 }
+
+

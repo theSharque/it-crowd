@@ -1,4 +1,4 @@
-package the.sharque.itcrowd.git;
+package the.sharque.itcrowd.chat;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -12,17 +12,14 @@ import org.springframework.data.relational.core.mapping.Table;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("GITS")
-public class GitProject {
+@Table("CHAT")
+public class ChatMessage {
 
     @Id
     private Long id;
-    private String name;
-    private String url;
-    private String hash;
-    private String location;
+    private String message;
+    private String author;
 
-    private GitStatus status;
     @Builder.Default
-    private LocalDateTime lastModified = LocalDateTime.now();
+    private LocalDateTime timestamp = LocalDateTime.now();
 }

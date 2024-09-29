@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="1">
+  <title>IT-Crowd :: Work Chat</title>
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container my-2">
+  <h3>Work chat</h3>
+  <a th:href="@{/}" class="btn btn-primary btn-sm mb-3">Back to title</a>
+  <div th:each="line:${lines}" class="ui-widget-content border-info" style="max-height: 80%;">
+    <p th:text="${line}"></p>
+  </div>
+</div>
+</body>
+</html>

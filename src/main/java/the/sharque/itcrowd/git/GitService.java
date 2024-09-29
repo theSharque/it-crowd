@@ -2,6 +2,7 @@ package the.sharque.itcrowd.git;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -11,14 +12,25 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import the.sharque.itcrowd.chat.ChatService;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class GitService {
 
+    private static final String AUTHOR = "Roy";
     private static final String GIT_HOME = "./gits/";
+    private static final String NEW_PROJECT = "Looks like a new project %s";
+    private static final String CLONED_WE_HAVE_IT_NOW = "New project %s cloned, we have it now.";
+    private static final String PROJECT_TROUBLE = "Project %s is in trouble, check this out: %s";
+    private static final String UPDATE_PROJECT = "Looking for update of project %s";
+    private static final String PROJECT_UPDATED = "Project %s updated.";
+    private static final String PROJECT_PROBLEM = "Project %s is in trouble, check this out: %s";
+    private static final String WE_ARE_HOMELESS_NOW = "Looks like we are homeless now";
+
     private final GitRepository gitRepository;
+    private final ChatService chatService;
 
     public void addProject(GitProject gitProject) {
         gitProject.setStatus(GitStatus.NEW);
@@ -26,14 +38,16 @@ public class GitService {
     }
 
     @Scheduled(fixedRate = 5000)
-    public void checkProject() {
+    public void checkNewProject() {
         gitRepository.findOneByStatus(GitStatus.NEW).ifPresent(gitProject -> {
             gitProject.setStatus(GitStatus.IN_PROGRESS);
+            chatService.writeToChat(AUTHOR, NEW_PROJECT.formatted(gitProject.getName()));
             gitRepository.save(gitProject);
 
             gitProject = cloneNewGit(gitProject);
 
             gitProject.setStatus(GitStatus.CLONED);
+            chatService.writeToChat(AUTHOR, CLONED_WE_HAVE_IT_NOW.formatted(gitProject.getName()));
             gitRepository.save(gitProject);
         });
     }
@@ -54,8 +68,26 @@ public class GitService {
 
             return gitProject;
         } catch (GitAPIException | IOException e) {
+            chatService.writeToChat(AUTHOR, PROJECT_TROUBLE.formatted(gitProject.getName(), e.getMessage()));
             throw new RuntimeException(e);
         }
+    }
+
+    @Scheduled(fixedRate = 5000)
+    public void checkUpdateProject() {
+        gitRepository.findOneByStatus(GitStatus.CLONED).ifPresent(gitProject -> {
+            gitProject.setStatus(GitStatus.IN_PROGRESS);
+            gitRepository.save(gitProject);
+
+            if (gitProject.getLastModified().isAfter(LocalDateTime.now().plusHours(1))) {
+                chatService.writeToChat(AUTHOR, UPDATE_PROJECT.formatted(gitProject.getName()));
+                gitProject = updateGit(gitProject);
+                chatService.writeToChat(AUTHOR, PROJECT_UPDATED.formatted(gitProject.getName()));
+            }
+
+            gitProject.setStatus(GitStatus.CLONED);
+            gitRepository.save(gitProject);
+        });
     }
 
     public GitProject updateGit(GitProject gitProject) {
@@ -67,6 +99,7 @@ public class GitService {
 
             return gitProject;
         } catch (IOException e) {
+            chatService.writeToChat(AUTHOR, PROJECT_PROBLEM.formatted(gitProject.getName(), e.getMessage()));
             throw new RuntimeException(e);
         }
     }
@@ -102,6 +135,7 @@ public class GitService {
         File home = new File(GIT_HOME);
         if (!home.exists()) {
             if (!home.mkdirs()) {
+                chatService.writeToChat(AUTHOR, WE_ARE_HOMELESS_NOW);
                 log.error("Failed to create git home directory");
             }
         }

@@ -1,24 +1,32 @@
-CREATE TABLE gits
+CREATE TABLE GITS
 (
     id            serial PRIMARY KEY,
-    name          varchar,
-    url           varchar,
+    name          varchar   not null,
+    url           varchar   not null,
     hash          varchar,
     location      varchar,
     token         varchar,
-    status        varchar,
-    last_modified timestamp default now()
+    status        varchar   not null,
+    last_modified timestamp not null default now()
 );
 
-CREATE TABLE java_methods
+CREATE TABLE JAVA_METHODS
 (
     id             serial PRIMARY KEY,
-    git_id         bigint REFERENCES gits (id),
-    method_name    varchar,
-    original_body  varchar,
-    hash           varchar,
+    git_id         bigint REFERENCES GITS (id),
+    method_name    varchar   not null,
+    original_body  varchar   not null,
+    hash           varchar   not null,
     modified_body  varchar,
     commit_message varchar,
-    status         varchar,
-    last_modified  timestamp default now()
+    status         varchar   not null,
+    last_modified  timestamp not null default now()
 );
+
+CREATE TABLE CHAT
+(
+    id        serial PRIMARY KEY,
+    author    varchar   not null,
+    message   varchar,
+    timestamp timestamp not null default now()
+)
