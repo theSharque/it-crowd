@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface MethodRepository<T> extends CrudRepository<T, Long> {
 
-    boolean notExistsByGitIdAndMethodNameAndHash(Long id, String key, String hash);
+    boolean existsByGitIdAndMethodNameAndHash(Long id, String key, String hash);
 
     Optional<T> findByStatus(MethodsStatus status);
 

@@ -63,7 +63,7 @@ public class JavaService {
                             .originalBody(stringStringEntry.getValue())
                             .hash(DigestUtils.md5DigestAsHex(stringStringEntry.getValue().getBytes()).toUpperCase())
                             .build())
-                    .filter(javaMethod -> javaMethodsRepository.notExistsByGitIdAndMethodNameAndHash(
+                    .filter(javaMethod -> !javaMethodsRepository.existsByGitIdAndMethodNameAndHash(
                             gitProject.getId(), javaMethod.getMethodName(), javaMethod.getHash()))
                     .toList();
 

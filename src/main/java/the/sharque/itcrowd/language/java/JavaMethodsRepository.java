@@ -10,7 +10,7 @@ import the.sharque.itcrowd.language.MethodsStatus;
 @Repository
 public interface JavaMethodsRepository extends MethodRepository<JavaMethod> {
 
-    boolean notExistsByGitIdAndMethodNameAndHash(Long id, String key, String hash);
+    boolean existsByGitIdAndMethodNameAndHash(Long id, String key, String hash);
 
     @Query("SELECT * FROM JAVA_METHODS WHERE STATUS = :status ORDER BY LAST_MODIFIED LIMIT 1")
     Optional<JavaMethod> findByStatus(MethodsStatus status);

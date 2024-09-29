@@ -30,7 +30,7 @@ import the.sharque.itcrowd.language.MethodsStatus;
 @RequiredArgsConstructor
 public class PythonService {
 
-    public static final String AUTHOR = "Moss";
+    public static final String AUTHOR = "Maurice";
     private static final String FINISHED = "I finished with %s nothing special just %d new methods";
     private static final String FILE_PROBLEM = "Something wrong in file %s";
     private static final String METHOD_PROBLEM = "Something wrong in method %s";
@@ -59,7 +59,7 @@ public class PythonService {
                             .originalBody(stringStringEntry.getValue())
                             .hash(DigestUtils.md5DigestAsHex(stringStringEntry.getValue().getBytes()).toUpperCase())
                             .build())
-                    .filter(javaMethod -> pythonMethodsRepository.notExistsByGitIdAndMethodNameAndHash(
+                    .filter(javaMethod -> !pythonMethodsRepository.existsByGitIdAndMethodNameAndHash(
                             gitProject.getId(), javaMethod.getMethodName(), javaMethod.getHash()))
                     .toList();
 

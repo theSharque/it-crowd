@@ -10,7 +10,7 @@ import the.sharque.itcrowd.language.MethodsStatus;
 @Repository
 public interface PythonMethodsRepository extends MethodRepository<PythonMethod> {
 
-    boolean notExistsByGitIdAndMethodNameAndHash(Long id, String key, String hash);
+    boolean existsByGitIdAndMethodNameAndHash(Long id, String key, String hash);
 
     @Query("SELECT * FROM PYTHON_METHODS WHERE STATUS = :status ORDER BY LAST_MODIFIED LIMIT 1")
     Optional<PythonMethod> findByStatus(MethodsStatus status);
