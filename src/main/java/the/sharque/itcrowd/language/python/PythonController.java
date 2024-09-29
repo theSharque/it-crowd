@@ -17,7 +17,7 @@ public class PythonController {
         return "python_list";
     }
 
-    @GetMapping("/java/reset/{id}")
+    @GetMapping("/python/reset/{id}")
     public String reset(Long id) {
         pythonService.resetMethod(id);
         return "redirect:/java";
