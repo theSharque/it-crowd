@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Projects</title>
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container my-2" align="center">
+  <h3>Add new GIT repository</h3>
+  <form th:href="@{/add}" method="post">
+    <label for="name">Name</label>
+    <input id="name" name="name" th:type="String">
+
+    <label for="url">Url of git repository</label>
+    <input id="url" name="url" th:type="String">
+
+    <button type="submit" class="btn btn-primary btn-sm mb-3">Add</button>
+  </form>
+</div>
+</body>
+</html>

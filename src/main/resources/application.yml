@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: it-crowd
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:file:./db/it-crowd-h2-db
+    username: sa
+  jpa:
+    hibernate:
+      ddl-auto: update
