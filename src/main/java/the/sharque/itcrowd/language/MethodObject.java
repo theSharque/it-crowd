@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 
 public interface MethodObject {
 
-    String getOriginalBody();
-
     void setOriginalBody(String originalBody);
 
     void setStatus(MethodsStatus status);
@@ -15,6 +13,8 @@ public interface MethodObject {
     void setCommitMessage(String commitMessage);
 
     void setLastModified(LocalDateTime lastModified);
+
+    String getOriginalBody();
 
     String getHash();
 
@@ -27,6 +27,12 @@ public interface MethodObject {
     LocalDateTime getLastModified();
 
     String getMethodName();
+
+    Long getId();
+
+    Long getGitId();
+
+    String getFileLocation();
 }
 
 

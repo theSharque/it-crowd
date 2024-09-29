@@ -1,5 +1,8 @@
 package the.sharque.itcrowd.language;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,6 +17,9 @@ import org.springframework.ai.ollama.api.OllamaApi.Message.Role;
 import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.stereotype.Service;
 import the.sharque.itcrowd.chat.ChatService;
+import the.sharque.itcrowd.git.GitRepository;
+import the.sharque.itcrowd.git.GitService;
+import the.sharque.itcrowd.git.GitStatus;
 
 @Slf4j
 @Service
@@ -32,6 +38,8 @@ public class JuniorDev {
 
     private final OllamaApi ollamaApi;
     private final ChatService chatService;
+    private final GitRepository gitRepository;
+    private final GitService gitService;
 
     public <T extends MethodObject> void getToWork(MethodRepository<T> methodRepository, String type, String author) {
         methodRepository.findByStatus(MethodsStatus.NEW).ifPresent(methodObject -> {
@@ -86,15 +94,60 @@ public class JuniorDev {
                 .withOptions(OllamaOptions.create().withTemperature(0.5f))
                 .build();
 
-        ChatResponse response = ollamaApi.chat(request);
+        try {
+            ChatResponse response = ollamaApi.chat(request);
+            if (response.done()) {
+                log.trace("Response done reason {}", response.doneReason());
+                log.trace("Response text {}", response.message().content());
 
-        if (response.done()) {
-            log.trace("Response done reason {}", response.doneReason());
-            log.trace("Response text {}", response.message().content());
-
-            return response.message().content();
+                return response.message().content();
+            }
+        } catch (RuntimeException e) {
+            log.error("Ollama error", e);
         }
 
         return null;
+    }
+
+    public <T extends MethodObject> void pushChanges(MethodRepository<T> methodRepository) {
+        methodRepository.findByStatus(MethodsStatus.OPTIMIZED).ifPresent(methodObject -> {
+            methodObject.setStatus(MethodsStatus.IN_PROGRESS);
+            methodRepository.save(methodObject);
+
+            gitRepository.findById(methodObject.getGitId()).ifPresent(gitProject -> {
+                gitProject.setStatus(GitStatus.IN_PROGRESS);
+                gitRepository.save(gitProject);
+
+                File updateFile = new File(methodObject.getFileLocation());
+
+                if (updateFile.exists() && updateFile.isFile() && updateFile.canRead() && updateFile.canWrite()) {
+                    String branchName = "ITCRWD-" + methodObject.getId();
+
+                    gitService.removeBranch(gitProject, branchName);
+                    String oldBranch = gitService.createBranch(gitProject, branchName);
+
+                    try {
+                        String content = Files.readString(updateFile.toPath());
+                        content = content.replace(methodObject.getOriginalBody(), methodObject.getModifiedBody());
+                        Files.write(updateFile.toPath(), content.getBytes());
+
+                        gitService.commitChanges(gitProject, methodObject.getCommitMessage());
+                        gitService.pushBranch(gitProject);
+                        gitService.removeBranch(gitProject, branchName);
+                    } catch (IOException e) {
+                        methodObject.setStatus(MethodsStatus.FAILED);
+                        methodRepository.save(methodObject);
+                        throw new RuntimeException(e);
+                    }
+
+                    gitService.checkOutBranch(gitProject, oldBranch);
+
+                    gitProject.setStatus(GitStatus.READY);
+                    gitRepository.save(gitProject);
+                }
+            });
+            methodObject.setStatus(MethodsStatus.PUSHED);
+            methodRepository.save(methodObject);
+        });
     }
 }

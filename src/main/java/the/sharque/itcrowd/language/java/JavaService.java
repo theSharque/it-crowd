@@ -45,6 +45,16 @@ public class JavaService {
     private final ChatService chatService;
     private final JuniorDev juniorDev;
 
+    @Scheduled(fixedDelay = 60000)
+    public void checkBody() {
+        juniorDev.getToWork(javaMethodsRepository, JAVA_REQUEST, AUTHOR);
+    }
+
+    @Scheduled(fixedDelay = 10000)
+    public void pushUpdate() {
+        juniorDev.pushChanges(javaMethodsRepository);
+    }
+
     @Scheduled(fixedDelay = 10000)
     public void loadMethods() {
         gitRepository.findOneByStatus(GitStatus.READY).ifPresent(gitProject -> {
@@ -154,11 +164,6 @@ public class JavaService {
 
     public List<JavaMethod> getMethods() {
         return javaMethodsRepository.findAllOrderByLastModifiedDesc();
-    }
-
-    @Scheduled(fixedDelay = 60000)
-    public void checkBody() {
-        juniorDev.getToWork(javaMethodsRepository, JAVA_REQUEST, AUTHOR);
     }
 
     public void resetMethod(Long id) {

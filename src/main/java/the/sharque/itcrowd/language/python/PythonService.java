@@ -21,7 +21,6 @@ import org.springframework.util.DigestUtils;
 import the.sharque.itcrowd.chat.ChatService;
 import the.sharque.itcrowd.git.GitProject;
 import the.sharque.itcrowd.git.GitRepository;
-import the.sharque.itcrowd.git.GitService;
 import the.sharque.itcrowd.git.GitStatus;
 import the.sharque.itcrowd.language.JuniorDev;
 import the.sharque.itcrowd.language.MethodsStatus;
@@ -41,7 +40,16 @@ public class PythonService {
     private final PythonMethodsRepository pythonMethodsRepository;
     private final ChatService chatService;
     private final JuniorDev juniorDev;
-    private final GitService gitService;
+
+    @Scheduled(fixedDelay = 60000)
+    public void checkBody() {
+        juniorDev.getToWork(pythonMethodsRepository, PYTHON_REQUEST, AUTHOR);
+    }
+
+    @Scheduled(fixedDelay = 10000)
+    public void pushUpdate() {
+        juniorDev.pushChanges(pythonMethodsRepository);
+    }
 
     @Scheduled(fixedDelay = 10000)
     public void loadMethods() {
@@ -143,54 +151,6 @@ public class PythonService {
 
     public List<PythonMethod> getFunctions() {
         return pythonMethodsRepository.findAllOrderByLastModifiedDesc();
-    }
-
-    @Scheduled(fixedDelay = 60000)
-    public void checkBody() {
-        juniorDev.getToWork(pythonMethodsRepository, PYTHON_REQUEST, AUTHOR);
-    }
-
-    @Scheduled(fixedDelay = 10000)
-    public void pushUpdate() {
-        pythonMethodsRepository.findByStatus(MethodsStatus.OPTIMIZED).ifPresent(pythonMethod -> {
-            pythonMethod.setStatus(MethodsStatus.IN_PROGRESS);
-            pythonMethodsRepository.save(pythonMethod);
-
-            gitRepository.findById(pythonMethod.getGitId()).ifPresent(gitProject -> {
-                gitProject.setStatus(GitStatus.IN_PROGRESS);
-                gitRepository.save(gitProject);
-
-                File updateFile = new File(pythonMethod.getFileLocation());
-
-                if (updateFile.exists() && updateFile.isFile() && updateFile.canRead() && updateFile.canWrite()) {
-                    String branchName = "ITCRWD-" + pythonMethod.getId();
-
-                    gitService.removeBranch(gitProject, branchName);
-                    String oldBranch = gitService.createBranch(gitProject, branchName);
-
-                    try {
-                        String content = Files.readString(updateFile.toPath());
-                        content = content.replace(pythonMethod.getOriginalBody(), pythonMethod.getModifiedBody());
-                        Files.write(updateFile.toPath(), content.getBytes());
-
-                        gitService.commitChanges(gitProject, pythonMethod.getCommitMessage());
-                        gitService.pushBranch(gitProject);
-                        gitService.removeBranch(gitProject, branchName);
-                    } catch (IOException e) {
-                        pythonMethod.setStatus(MethodsStatus.FAILED);
-                        pythonMethodsRepository.save(pythonMethod);
-                        throw new RuntimeException(e);
-                    }
-
-                    gitService.checkOutBranch(gitProject, oldBranch);
-
-                    gitProject.setStatus(GitStatus.READY);
-                    gitRepository.save(gitProject);
-                }
-            });
-            pythonMethod.setStatus(MethodsStatus.PUSHED);
-            pythonMethodsRepository.save(pythonMethod);
-        });
     }
 
     public void resetMethod(Long id) {
