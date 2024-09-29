@@ -160,4 +160,11 @@ public class JavaService {
     public void checkBody() {
         juniorDev.getToWork(javaMethodsRepository, JAVA_REQUEST, AUTHOR);
     }
+
+    public void resetMethod(Long id) {
+        javaMethodsRepository.findById(id).ifPresent(javaMethod -> {
+            javaMethod.setStatus(MethodsStatus.NEW);
+            javaMethodsRepository.save(javaMethod);
+        });
+    }
 }

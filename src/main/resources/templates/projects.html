@@ -25,7 +25,8 @@
       <td th:text="${project.getUrl()}"></td>
       <td th:text="${project.getStatus()}"></td>
       <td>
-        <a th:href="@{/delete/{id}(id=${project.getId()})}" class="btn btn-danger">Delete</a>
+        <a th:href="@{/git/reset/{id}(id=${project.getId()})}" class="btn btn-secondary">Reset</a>
+        <a th:href="@{/git/delete/{id}(id=${project.getId()})}" class="btn btn-danger">Delete</a>
       </td>
     </tr>
     </tbody>

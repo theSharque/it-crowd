@@ -16,4 +16,10 @@ public class JavaController {
         model.addAttribute("methods", javaService.getMethods());
         return "java_list";
     }
+
+    @GetMapping("/java/reset/{id}")
+    public String reset(Long id) {
+        javaService.resetMethod(id);
+        return "redirect:/java";
+    }
 }

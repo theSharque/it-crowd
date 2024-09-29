@@ -189,4 +189,11 @@ public class PythonService {
             pythonMethodsRepository.save(pythonMethod);
         });
     }
+
+    public void resetMethod(Long id) {
+        pythonMethodsRepository.findById(id).ifPresent(javaMethod -> {
+            javaMethod.setStatus(MethodsStatus.NEW);
+            pythonMethodsRepository.save(javaMethod);
+        });
+    }
 }

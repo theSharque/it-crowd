@@ -38,4 +38,10 @@ public class GitController {
         gitService.deleteProject(id);
         return "redirect:/git";
     }
+
+    @GetMapping("/git/reset/{id}")
+    public String resetProject(@PathVariable Long id) {
+        gitService.resetStatus(id);
+        return "redirect:/git";
+    }
 }

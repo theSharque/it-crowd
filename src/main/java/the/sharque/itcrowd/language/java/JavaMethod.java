@@ -31,5 +31,3 @@ public class JavaMethod implements MethodObject {
     @Builder.Default
     private LocalDateTime lastModified = LocalDateTime.now();
 }
-
-

@@ -14,13 +14,15 @@
     <tr>
       <th>Method name</th>
       <th>Status</th>
-      <th>Date</th>
+      <th>Action</th>
+      <th>Date abd time string</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="method:${methods}">
       <td th:text="${method.getMethodName()}"></td>
       <td th:text="${method.getStatus()}"></td>
+      <td><a th:href="@{/java/reset/{id}(id=${method.getId()})}" class="btn btn-secondary">Reset</a></td>
       <td th:text="${method.getLastModified()}"></td>
     </tr>
     </tbody>

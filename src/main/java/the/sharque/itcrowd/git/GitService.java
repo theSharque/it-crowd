@@ -137,6 +137,13 @@ public class GitService {
         });
     }
 
+    public void resetStatus(Long id) {
+        gitRepository.findById(id).ifPresent(gitProject -> {
+            gitProject.setStatus(GitStatus.IN_PROGRESS);
+            gitRepository.save(gitProject);
+        });
+    }
+
     private boolean deleteDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {

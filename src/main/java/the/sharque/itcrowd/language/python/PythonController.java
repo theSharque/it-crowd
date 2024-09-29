@@ -9,11 +9,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequiredArgsConstructor
 public class PythonController {
 
-    private final PythonService javaService;
+    private final PythonService pythonService;
 
     @GetMapping("/python")
     public String index(Model model) {
-        model.addAttribute("funs", javaService.getFunctions());
+        model.addAttribute("funs", pythonService.getFunctions());
         return "python_list";
+    }
+
+    @GetMapping("/java/reset/{id}")
+    public String reset(Long id) {
+        pythonService.resetMethod(id);
+        return "redirect:/java";
     }
 }

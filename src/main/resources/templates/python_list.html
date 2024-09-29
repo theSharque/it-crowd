@@ -14,6 +14,7 @@
     <tr>
       <th>Method name</th>
       <th>Status</th>
+      <th>Action</th>
       <th>Date</th>
     </tr>
     </thead>
@@ -21,6 +22,7 @@
     <tr th:each="fun:${funs}">
       <td th:text="${fun.getMethodName()}"></td>
       <td th:text="${fun.getStatus()}"></td>
+      <td><a th:href="@{/python/reset/{id}(id=${fun.getId()})}" class="btn btn-secondary">Reset</a></td>
       <td th:text="${fun.getLastModified()}"></td>
     </tr>
     </tbody>
