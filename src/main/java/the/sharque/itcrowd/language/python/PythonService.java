@@ -1,4 +1,6 @@
-package the.sharque.itcrowd.java;
+package the.sharque.itcrowd.language.python;
+
+import static the.sharque.itcrowd.language.JuniorDev.PYTHON_REQUEST;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,25 +22,24 @@ import the.sharque.itcrowd.chat.ChatService;
 import the.sharque.itcrowd.git.GitProject;
 import the.sharque.itcrowd.git.GitRepository;
 import the.sharque.itcrowd.git.GitStatus;
+import the.sharque.itcrowd.language.JuniorDev;
+import the.sharque.itcrowd.language.MethodsStatus;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class JavaService {
+public class PythonService {
 
     public static final String AUTHOR = "Moss";
     private static final String FINISHED = "I finished with %s nothing special just %d new methods";
     private static final String FILE_PROBLEM = "Something wrong in file %s";
     private static final String METHOD_PROBLEM = "Something wrong in method %s";
 
-    private final Pattern HAS_CLASS = Pattern.compile(
-            "package\\b\\s(?<package>.*?);.*?class.+?(?<name>.+?)\\b.*?\\{(?<body>.+)}.*", Pattern.DOTALL);
-    private final Pattern METHODS = Pattern.compile(
-            "(?:(?:public|private|protected|static|final|native|synchronized|abstract|transient)+\\s+)+[,.$_\\w<>\\[\\]\\s]*\\s+(?<name>[$_\\w]+\\([^)]*\\)?)\\s*\\{?[^}]*}?",
-            Pattern.DOTALL);
+    private final Pattern FUNCTION = Pattern.compile(".*?def +(?<name>.*?\\)) *?:", Pattern.DOTALL);
     private final GitRepository gitRepository;
-    private final JavaMethodsRepository javaMethodsRepository;
+    private final PythonMethodsRepository pythonMethodsRepository;
     private final ChatService chatService;
+    private final JuniorDev juniorDev;
 
     @Scheduled(fixedDelay = 10000)
     public void loadMethods() {
@@ -46,25 +47,25 @@ public class JavaService {
             gitProject.setStatus(GitStatus.IN_PROGRESS);
             gitRepository.save(gitProject);
 
-            List<String> files = findJavaFiles(gitProject);
+            List<String> files = findPythonFunctions(gitProject);
 
-            List<JavaMethod> methods = files.stream()
+            List<PythonMethod> methods = files.stream()
                     .map(this::findMethods)
                     .flatMap(stringStringMap -> stringStringMap.entrySet().stream())
-                    .map(stringStringEntry -> JavaMethod.builder()
+                    .map(stringStringEntry -> PythonMethod.builder()
                             .gitId(gitProject.getId())
-                            .status(JavaMethodsStatus.NEW)
+                            .status(MethodsStatus.NEW)
                             .methodName(stringStringEntry.getKey())
                             .originalBody(stringStringEntry.getValue())
                             .hash(DigestUtils.md5DigestAsHex(stringStringEntry.getValue().getBytes()).toUpperCase())
                             .build())
-                    .filter(javaMethod -> !javaMethodsRepository.existsByGitIdAndMethodNameAndHash(
+                    .filter(javaMethod -> pythonMethodsRepository.notExistsByGitIdAndMethodNameAndHash(
                             gitProject.getId(), javaMethod.getMethodName(), javaMethod.getHash()))
                     .toList();
 
             if (!methods.isEmpty()) {
                 chatService.writeToChat(AUTHOR, FINISHED.formatted(gitProject.getName(), methods.size()));
-                javaMethodsRepository.saveAll(methods);
+                pythonMethodsRepository.saveAll(methods);
             }
 
             gitProject.setStatus(GitStatus.CLONED);
@@ -72,14 +73,14 @@ public class JavaService {
         });
     }
 
-    public List<String> findJavaFiles(GitProject gitProject) {
+    public List<String> findPythonFunctions(GitProject gitProject) {
         File directory = new File(gitProject.getLocation());
         List<String> files = Collections.emptyList();
 
         if (directory.exists()) {
             try (Stream<Path> stream = Files.walk(directory.toPath())) {
                 files = stream.map(Path::toString)
-                        .filter(string -> string.endsWith(".java"))
+                        .filter(string -> string.endsWith(".py"))
                         .peek(fileName -> log.info("Found file {}", fileName))
                         .toList();
             } catch (IOException e) {
@@ -99,16 +100,7 @@ public class JavaService {
             try {
                 List<String> lines = Files.readAllLines(file.toPath());
                 String content = String.join("\n", lines);
-                Matcher classMatcher = HAS_CLASS.matcher(content);
-
-                if (!classMatcher.find() || classMatcher.group("name").isBlank()) {
-                    return Collections.emptyMap();
-                }
-
-                String className = classMatcher.group("package") + "." + classMatcher.group("name");
-                String classBody = classMatcher.group("body");
-
-                Matcher methodMatcher = METHODS.matcher(classBody);
+                Matcher methodMatcher = FUNCTION.matcher(content);
 
                 int i = 0;
                 StringBuilder methodBody = null;
@@ -125,19 +117,19 @@ public class JavaService {
                     }
 
                     if (methodBody != null) {
-                        result.put(className + "." + methodName, methodBody.toString());
+                        result.put(fileName + "." + methodName, methodBody.toString());
                     }
 
                     methodName = nextMethodName;
-                    methodBody = new StringBuilder(lines.get(i));
+                    methodBody = new StringBuilder(lines.get(i) + "\n");
                     i++;
                 }
 
                 if (methodBody != null) {
-                    result.put(className + "." + methodName, methodBody.toString());
+                    result.put(fileName + "." + methodName, methodBody.toString());
                 }
 
-                log.info("Class {} has {} methods", className, result.size());
+                log.info("File {} has {} Functions", fileName, result.size());
             } catch (IOException e) {
                 chatService.writeToChat(AUTHOR, METHOD_PROBLEM.formatted(e.getMessage()));
                 throw new RuntimeException(e);
@@ -147,7 +139,12 @@ public class JavaService {
         return result;
     }
 
-    public List<JavaMethod> getMethods() {
-        return javaMethodsRepository.findAllOrderByLastModifiedDesc();
+    public List<PythonMethod> getFunctions() {
+        return pythonMethodsRepository.findAllOrderByLastModifiedDesc();
+    }
+
+    @Scheduled(fixedDelay = 60000)
+    public void checkBody() {
+        juniorDev.getToWork(pythonMethodsRepository, PYTHON_REQUEST);
     }
 }

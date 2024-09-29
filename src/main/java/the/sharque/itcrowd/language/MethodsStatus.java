@@ -1,6 +1,6 @@
-package the.sharque.itcrowd.java;
+package the.sharque.itcrowd.language;
 
-public enum JavaMethodsStatus {
+public enum MethodsStatus {
     NEW,
     SKIPPED,
     CHECKED,
