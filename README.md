@@ -17,6 +17,16 @@ Under construction (not usable yet :)
 ## Description
 Project starts like a Just For Fun pet-project :) This IT-crowd will work for you for free, well almost for free.
 
+* Run IT-Crowd
+* Setup a GIT project you want to include (access to clone, push new branch)
+* Wait...
+* IT-Crowd clone your project to local folder
+* Get all python functions/Java methods
+* Use AI to optimize the method
+* Check if it is applicable (just simple check changes)
+* Create new branch nad push it into your git..(..hub, ..lab, ..any)
+* All what you need is to create a PR/MR and review changes
+
 ### Currently available modules:
 * Project (git) module - allow to download source code from remote GIT
 * Java Junior dev - create an optimized version for each method bigger than 5 rows
