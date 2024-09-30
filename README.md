@@ -1,19 +1,5 @@
 # it-crowd
 
-## Raw installation
-1. You need ollama installed https://ollama.com/download
-2. Pull deepseek-coder-v2 use command `ollama pull deepseek-coder-v2:latest`
-3. You need to have Java-17
-4. Run the code
-
-## Docker run
-Run in terminal:
-* `docker build . --tag=it-crowd`
-* `docker container run -p 8080:8080 it-crowds`
-
-## Docker-compose run
-Under construction (not usable yet :)
-
 ## Description
 Project starts like a Just For Fun pet-project :) This IT-crowd will work for you for free, well almost for free.
 
@@ -27,6 +13,26 @@ Project starts like a Just For Fun pet-project :) This IT-crowd will work for yo
 * Create new branch nad push it into your git..(..hub, ..lab, ..any)
 * All what you need is to create a PR/MR and review changes
 
+## Raw installation
+1. You need ollama instructions: https://ollama.com/download
+2. Pull deepseek-coder-v2 use command `ollama pull deepseek-coder-v2:latest`
+3. You need Java-17
+4. Build `./gradlew bootJar`
+5. Run the code `java -jar ./build/libs/it-crowd-0.0.1-SNAPSHOT.jar`
+
+## Docker run
+Please wait for model pull before use! IT TAKES TIME!
+
+Run in terminal:
+* `docker build . --tag=it-crowd`
+* `docker container run -p 8080:8080 it-crowds`
+
+## Docker-compose run
+Please wait for model pull before use! IT TAKES TIME!
+
+Run in terminal:
+* `docker-compose up -d`
+
 ### Currently available modules:
 * Project (git) module - allow to download source code from remote GIT
 * Java Junior dev - create an optimized version for each method bigger than 5 lines
@@ -34,12 +40,12 @@ Project starts like a Just For Fun pet-project :) This IT-crowd will work for yo
 * Internal chat (actually just a log on the screen)
 * Generate new branch and create a commit with message
 * Push branch to review
-* Create single-installation dockerfile
+* Single-installation dockerfile
+* Docker-compose module file
 
 ### Future plan:
-* Create docker-compose module file
-* Support for JavaScript / TypeScript
 * Add QA junior unit-test writer
+* Support for JavaScript / TypeScript
 
 # Used:
 * https://github.com/ollama/ollama

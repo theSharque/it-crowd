@@ -21,7 +21,7 @@
     </thead>
     <tbody>
     <tr th:each="fun:${funs}">
-      <td th:text="${T(the.sharque.itcrowd.language.JuniorDev).ITCRWD+(fun.getId())}"></td>
+      <td th:text="${T(the.sharque.itcrowd.devs.JuniorDev).ITCRWD+(fun.getId())}"></td>
       <td th:text="${fun.getMethodName()}"></td>
       <td th:text="${fun.getStatus()}"></td>
       <td><a th:href="@{/python/reset/{id}(id=${fun.getId()})}" class="btn btn-secondary">Reset</a></td>

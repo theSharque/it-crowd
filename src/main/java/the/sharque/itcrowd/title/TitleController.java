@@ -6,8 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import the.sharque.itcrowd.chat.ChatService;
 import the.sharque.itcrowd.git.GitService;
-import the.sharque.itcrowd.language.java.JavaService;
-import the.sharque.itcrowd.language.python.PythonService;
+import the.sharque.itcrowd.devs.java.JavaService;
+import the.sharque.itcrowd.devs.python.PythonService;
 
 @Controller
 @RequiredArgsConstructor

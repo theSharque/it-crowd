@@ -1,4 +1,4 @@
-package the.sharque.itcrowd.language.java;
+package the.sharque.itcrowd.devs.python;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @RequiredArgsConstructor
-public class JavaController {
+public class PythonController {
 
-    private final JavaService javaService;
+    private final PythonService pythonService;
 
-    @GetMapping("/java")
+    @GetMapping("/python")
     public String index(Model model) {
-        model.addAttribute("methods", javaService.getMethods());
-        return "java_list";
+        model.addAttribute("funs", pythonService.getFunctions());
+        return "python_list";
     }
 
-    @GetMapping("/java/reset/{id}")
+    @GetMapping("/python/reset/{id}")
     public String reset(@PathVariable Long id) {
-        javaService.resetMethod(id);
-        return "redirect:/java";
+        pythonService.resetMethod(id);
+        return "redirect:/python";
     }
 }

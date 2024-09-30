@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile_ollama
     restart: always
-    ports:
-      - "11434:11434"
+    volumes:
+      - ollama_models:/usr/share/ollama/.ollama
     networks:
       - it-crowd
 
@@ -17,8 +17,12 @@ services:
       context: ../
       dockerfile: multi_docker/Dockerfile_crowd
     restart: always
+    environment:
+      OLLAMA_URL: http://ollama:11434
     ports:
       - "8080:8080"
+    volumes:
+      - db:/db
     networks:
       - it-crowd
     depends_on:
@@ -27,3 +31,9 @@ services:
 networks:
   it-crowd:
     driver: bridge
+
+volumes:
+  ollama_models:
+    external: false
+  db:
+    external: false

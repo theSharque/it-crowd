@@ -1,5 +1,7 @@
-echo "Run and pull model..."
+echo "Run ollama..."
 ollama serve &
-sleep 5
+sleep 1
+echo "Pull model..."
 ollama pull deepseek-coder-v2
-echo "Ollama started!"
+echo "Model ready to use"
+tail -f /dev/null

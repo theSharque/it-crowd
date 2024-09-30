@@ -1,4 +1,4 @@
-package the.sharque.itcrowd.language;
+package the.sharque.itcrowd.devs;
 
 public enum MethodsStatus {
     NEW,

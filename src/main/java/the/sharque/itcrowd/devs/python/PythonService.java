@@ -1,6 +1,6 @@
-package the.sharque.itcrowd.language.python;
+package the.sharque.itcrowd.devs.python;
 
-import static the.sharque.itcrowd.language.JuniorDev.PYTHON_REQUEST;
+import static the.sharque.itcrowd.devs.JuniorDev.PYTHON_REQUEST;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,8 +22,8 @@ import the.sharque.itcrowd.chat.ChatService;
 import the.sharque.itcrowd.git.GitProject;
 import the.sharque.itcrowd.git.GitRepository;
 import the.sharque.itcrowd.git.GitStatus;
-import the.sharque.itcrowd.language.JuniorDev;
-import the.sharque.itcrowd.language.MethodsStatus;
+import the.sharque.itcrowd.devs.JuniorDev;
+import the.sharque.itcrowd.devs.MethodsStatus;
 
 @Slf4j
 @Service

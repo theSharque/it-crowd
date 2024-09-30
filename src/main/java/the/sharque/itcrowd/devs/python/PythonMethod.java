@@ -1,4 +1,4 @@
-package the.sharque.itcrowd.language.python;
+package the.sharque.itcrowd.devs.python;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -7,8 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
-import the.sharque.itcrowd.language.MethodObject;
-import the.sharque.itcrowd.language.MethodsStatus;
+import the.sharque.itcrowd.devs.MethodObject;
+import the.sharque.itcrowd.devs.MethodsStatus;
 
 @Data
 @Builder

@@ -1,12 +1,12 @@
-package the.sharque.itcrowd.language.python;
+package the.sharque.itcrowd.devs.python;
 
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import the.sharque.itcrowd.language.MethodRepository;
-import the.sharque.itcrowd.language.MethodsStatus;
+import the.sharque.itcrowd.devs.MethodRepository;
+import the.sharque.itcrowd.devs.MethodsStatus;
 
 @Repository
 public interface PythonMethodsRepository extends CrudRepository<PythonMethod, Long>, MethodRepository<PythonMethod> {
