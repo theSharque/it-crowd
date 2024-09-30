@@ -7,10 +7,12 @@
 4. Run the code
 
 ## Docker run
-Under construction
+Run in terminal:
+* `docker build . --tag=it-crowd`
+* `docker container run -p 8080:8080 it-crowds`
 
 ## Docker-compose run
-Under construction
+Under construction (not usable yet :)
 
 ## Description
 Project starts like a Just For Fun pet-project :) This IT-crowd will work for you for free, well almost for free.
@@ -22,10 +24,10 @@ Project starts like a Just For Fun pet-project :) This IT-crowd will work for yo
 * Support for Python
 * Generate new branch and create a commit with message
 * Push branch to review
-
-### Future plan:
 * Create single-installation dockerfile
 * Create docker-compose module file
+
+### Future plan:
 * Support for JavaScript / TypeScript
 * Add QA junior unit-test writer
 

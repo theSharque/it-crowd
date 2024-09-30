@@ -1,0 +1,29 @@
+version: "3.9"
+services:
+  ollama:
+    container_name: ollama
+    build:
+      context: .
+      dockerfile: Dockerfile_ollama
+    restart: always
+    ports:
+      - "11434:11434"
+    networks:
+      - it-crowd
+
+  it-crowd:
+    container_name: it-crowd
+    build:
+      context: ../
+      dockerfile: multi_docker/Dockerfile_crowd
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - it-crowd
+    depends_on:
+      - ollama
+
+networks:
+  it-crowd:
+    driver: bridge
