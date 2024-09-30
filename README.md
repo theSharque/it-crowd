@@ -29,15 +29,15 @@ Project starts like a Just For Fun pet-project :) This IT-crowd will work for yo
 
 ### Currently available modules:
 * Project (git) module - allow to download source code from remote GIT
-* Java Junior dev - create an optimized version for each method bigger than 5 rows
-* Add internal chat (actually just a log on the screen)
-* Support for Python
+* Java Junior dev - create an optimized version for each method bigger than 5 lines
+* Python Junior dev - create an optimized version for each function bigger than 5 lines
+* Internal chat (actually just a log on the screen)
 * Generate new branch and create a commit with message
 * Push branch to review
 * Create single-installation dockerfile
-* Create docker-compose module file
 
 ### Future plan:
+* Create docker-compose module file
 * Support for JavaScript / TypeScript
 * Add QA junior unit-test writer
 
