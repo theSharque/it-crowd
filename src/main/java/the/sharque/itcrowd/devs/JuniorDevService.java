@@ -43,13 +43,11 @@ public abstract class JuniorDevService {
     public static final Pattern PARSE_RESPONSE = Pattern.compile(
             "(?<text>.*)```.*?\\n(?<code>.*)```.*?\\n*(?<comment>.*)", Pattern.DOTALL);
 
-    public static final String JAVA_REQUEST = "You are Java developer, optimize the method";
-    public static final String PYTHON_REQUEST = "You are python developer, optimize the method";
     public static final String ITCRWD = "ITCRWD-";
 
     private final OllamaApi ollamaApi;
     private final GitService gitService;
-    private final SettingsService settingsService;
+    protected final SettingsService settingsService;
     protected final ChatService chatService;
     protected final GitRepository gitRepository;
     protected final FunctionRepository functionRepository;
@@ -173,7 +171,7 @@ public abstract class JuniorDevService {
     }
 
     public void loadProject(LanguageType language) {
-        FunctionStatus newFunctions = "active".equals(settingsService.getStatus(AUTHOR))
+        FunctionStatus newFunctions = "active".equals(settingsService.getValue(AUTHOR, null))
                 ? FunctionStatus.NEW
                 : FunctionStatus.WAIT;
 

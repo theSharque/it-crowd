@@ -20,10 +20,14 @@ public class SettingsController {
     }
 
     @GetMapping("/settings/update")
-    public String index(@RequestParam String model, @RequestParam String roy, @RequestParam String moss) {
-        settingsService.updateValue("model", model);
-        settingsService.updateValue("roy", roy);
-        settingsService.updateValue("moss", moss);
+    public String index(@RequestParam("Model") String model,
+            @RequestParam("Language") String language,
+            @RequestParam("Roy") String roy,
+            @RequestParam("Moss") String moss) {
+        settingsService.updateValue("Model", model);
+        settingsService.updateValue("Language", language);
+        settingsService.updateValue("Roy", roy);
+        settingsService.updateValue("Moss", moss);
 
         return "redirect:/settings";
     }

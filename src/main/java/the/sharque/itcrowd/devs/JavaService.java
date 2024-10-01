@@ -26,6 +26,10 @@ import the.sharque.itcrowd.settings.SettingsService;
 public class JavaService extends JuniorDevService {
 
     private final LanguageType MODULE_LANGUAGE = JAVA;
+    public static final Map<String, String> JAVA_REQUEST = Map.of(
+            "English", "You are Java developer, optimize the method",
+            "Russian", "Ты разработчик на Java, оптимизируй этот метод"
+    );
 
     private final Pattern HAS_CLASS = Pattern.compile(
             "package\\b\\s(?<package>.*?);.*?class.+?(?<name>.+?)\\b.*?\\{(?<body>.+)}.*", Pattern.DOTALL);
@@ -34,8 +38,8 @@ public class JavaService extends JuniorDevService {
             Pattern.DOTALL);
     private final Pattern CLEAN_BODY = Pattern.compile("(?<body>.*}\\n?)");
 
-    public JavaService(OllamaApi ollamaApi, GitService gitService,
-            SettingsService settingsService, ChatService chatService,
+    public JavaService(OllamaApi ollamaApi, GitService gitService, SettingsService settingsService,
+            ChatService chatService,
             GitRepository gitRepository, FunctionRepository functionRepository) {
         super(ollamaApi, gitService, settingsService, chatService, gitRepository, functionRepository);
     }
@@ -43,7 +47,8 @@ public class JavaService extends JuniorDevService {
 
     @Scheduled(fixedDelay = 60000)
     public void checkBody() {
-        getToWork(JAVA_REQUEST, AUTHOR);
+        String lang = settingsService.getValue("Language", "English");
+        getToWork(JAVA_REQUEST.get(lang), AUTHOR);
     }
 
     @Scheduled(fixedDelay = 10000)

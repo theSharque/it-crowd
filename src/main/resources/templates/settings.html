@@ -9,24 +9,34 @@
 <div class="container my-2" style="align-content: center;">
   <h3>General settings</h3>
   <a th:href="@{/}" class="btn btn-primary btn-sm mb-3">Back to title</a>
+  <!--/*@thymesVar id="Model" type="java.lang.String"*/-->
+  <!--/*@thymesVar id="Language" type="java.lang.String"*/-->
+  <!--/*@thymesVar id="Roy" type="java.lang.String"*/-->
+  <!--/*@thymesVar id="Moss" type="java.lang.String"*/-->
   <form th:action="@{/settings/update}" type="GET">
-    <label for="model">Model</label>
-    <select id="model" name="model">
-      <option th:selected="${model=='deepseek-coder-v2'}">deepseek-coder-v2</option>
+    <label for="Model">Model</label>
+    <select id="Model" name="Model">
+      <option th:selected="${Model=='deepseek-coder-v2'}">deepseek-coder-v2</option>
     </select>
 
-    <label for="roy">Roy</label>
-    <select id="roy" name="roy">
+    <label for="Language">Language</label>
+    <select id="Language" name="Language">
+      <option th:selected="${Language=='English'}">English</option>
+      <option th:selected="${Language=='Russian'}">Russian</option>
+    </select>
+
+    <label for="Roy">Roy</label>
+    <select id="Roy" name="Roy">
       <option th:selected="${Roy=='active'}">active</option>
       <option th:selected="${Roy=='lazy'}">lazy</option>
       <option th:selected="${Roy=='day off'}">day off</option>
     </select>
 
-    <label for="moss">Moss</label>
-    <select id="moss" name="moss">
-      <option th:selected="${Roy=='active'}">active</option>
-      <option th:selected="${Roy=='lazy'}">lazy</option>
-      <option th:selected="${Roy=='day off'}">day off</option>
+    <label for="Moss">Moss</label>
+    <select id="Moss" name="Moss">
+      <option th:selected="${Moss=='active'}">active</option>
+      <option th:selected="${Moss=='lazy'}">lazy</option>
+      <option th:selected="${Moss=='day off'}">day off</option>
     </select>
 
     <button type="submit" class="btn btn-primary">Save</button>

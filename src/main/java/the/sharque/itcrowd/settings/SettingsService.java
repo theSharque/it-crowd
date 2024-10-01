@@ -17,8 +17,8 @@ public class SettingsService {
                 .collect(Collectors.toMap(SettingsModel::getId, SettingsModel::getVal));
     }
 
-    public String getStatus(String author) {
-        return settingsRepository.findById(author).map(SettingsModel::getVal).orElse(null);
+    public String getValue(String key, String defaultValue) {
+        return settingsRepository.findById(key).map(SettingsModel::getVal).orElse(defaultValue);
     }
 
     public void updateValue(String key, String value) {

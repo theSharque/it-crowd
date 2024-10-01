@@ -42,6 +42,7 @@ CREATE TABLE SETTINGS
 );
 
 INSERT INTO SETTINGS (id, val)
-VALUES ('model', 'deepseek-coder-v2'),
+VALUES ('Model', 'deepseek-coder-v2'),
+       ('Language', 'english'),
        ('Roy', 'active'),
        ('Moss', 'active');

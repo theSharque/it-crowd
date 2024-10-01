@@ -25,6 +25,10 @@ import the.sharque.itcrowd.settings.SettingsService;
 public class PythonService extends JuniorDevService {
 
     private final LanguageType MODULE_LANGUAGE = PYTHON;
+    public static final Map<String, String> PYTHON_REQUEST = Map.of(
+            "English", "You are python developer, optimize the method",
+            "Russian", "Ты разработчик на Python, оптимизируй этот метод"
+    );
 
     private final Pattern FUNCTION = Pattern.compile(".*?def +(?<name>.*?\\)) *?:", Pattern.DOTALL);
 
@@ -37,7 +41,8 @@ public class PythonService extends JuniorDevService {
 
     @Scheduled(fixedDelay = 60000)
     public void checkBody() {
-        getToWork(PYTHON_REQUEST, AUTHOR);
+        String lang = settingsService.getValue("Language", "English");
+        getToWork(PYTHON_REQUEST.get(lang), AUTHOR);
     }
 
     @Scheduled(fixedDelay = 10000)

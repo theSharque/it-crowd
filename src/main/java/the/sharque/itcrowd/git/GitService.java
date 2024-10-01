@@ -38,7 +38,7 @@ public class GitService {
     private final SettingsService settingsService;
 
     public void addProject(GitProject gitProject) {
-        if ("active".equals(settingsService.getStatus(AUTHOR))) {
+        if ("active".equals(settingsService.getValue(AUTHOR, null))) {
             gitProject.setStatus(GitStatus.NEW);
         } else {
             gitProject.setStatus(GitStatus.WAIT);
@@ -147,7 +147,12 @@ public class GitService {
 
     public void resetStatus(Long id) {
         gitRepository.findById(id).ifPresent(gitProject -> {
-            gitProject.setStatus(GitStatus.READY);
+            if (gitProject.getStatus() == GitStatus.WAIT
+                    || gitProject.getStatus() == GitStatus.IN_PROGRESS
+                    || gitProject.getStatus() == GitStatus.FAILED) {
+                gitProject.setStatus(GitStatus.NEW);
+            }
+
             gitRepository.save(gitProject);
         });
     }
