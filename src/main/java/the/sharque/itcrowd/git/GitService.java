@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -82,7 +83,7 @@ public class GitService {
             gitRepository.save(gitProject);
 
             return gitProject;
-        } catch (GitAPIException | IOException e) {
+        } catch (JGitInternalException | GitAPIException | IOException e) {
             gitProject.setStatus(GitStatus.FAILED);
             gitProject.setLastModified(LocalDateTime.now());
             gitRepository.save(gitProject);
@@ -146,7 +147,7 @@ public class GitService {
 
     public void resetStatus(Long id) {
         gitRepository.findById(id).ifPresent(gitProject -> {
-            gitProject.setStatus(GitStatus.NEW);
+            gitProject.setStatus(GitStatus.READY);
             gitRepository.save(gitProject);
         });
     }
