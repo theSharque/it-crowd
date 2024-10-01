@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,9 +19,11 @@ public class SettingsController {
         return "settings";
     }
 
-    @GetMapping("/settings/save/{key}/{value}")
-    public String index(@PathVariable String key, @PathVariable String value) {
-        settingsService.updateValue(key, value);
+    @GetMapping("/settings/update")
+    public String index(@RequestParam String model, @RequestParam String roy, @RequestParam String moss) {
+        settingsService.updateValue("model", model);
+        settingsService.updateValue("roy", roy);
+        settingsService.updateValue("moss", moss);
 
         return "redirect:/settings";
     }
