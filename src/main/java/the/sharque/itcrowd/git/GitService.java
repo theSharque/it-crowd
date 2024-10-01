@@ -15,6 +15,7 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import the.sharque.itcrowd.chat.ChatService;
+import the.sharque.itcrowd.settings.SettingsService;
 
 @Slf4j
 @Service
@@ -33,9 +34,15 @@ public class GitService {
 
     private final GitRepository gitRepository;
     private final ChatService chatService;
+    private final SettingsService settingsService;
 
     public void addProject(GitProject gitProject) {
-        gitProject.setStatus(GitStatus.NEW);
+        if ("active".equals(settingsService.getStatus(AUTHOR))) {
+            gitProject.setStatus(GitStatus.NEW);
+        } else {
+            gitProject.setStatus(GitStatus.WAIT);
+        }
+
         gitRepository.save(gitProject);
     }
 

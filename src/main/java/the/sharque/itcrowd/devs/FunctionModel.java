@@ -1,4 +1,4 @@
-package the.sharque.itcrowd.devs.python;
+package the.sharque.itcrowd.devs;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -7,19 +7,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
-import the.sharque.itcrowd.devs.MethodObject;
-import the.sharque.itcrowd.devs.MethodsStatus;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table("PYTHON_METHODS")
-public class PythonMethod implements MethodObject {
+@Table("FUNCTIONS")
+public class FunctionModel {
 
     @Id
     private Long id;
     private Long gitId;
+    private LanguageType language;
     private String fileLocation;
     private String methodName;
     private String originalBody;
@@ -27,7 +26,9 @@ public class PythonMethod implements MethodObject {
     private String modifiedBody;
     private String commitMessage;
 
-    private MethodsStatus status;
+    private FunctionStatus status;
     @Builder.Default
     private LocalDateTime lastModified = LocalDateTime.now();
 }
+
+

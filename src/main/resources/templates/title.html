@@ -16,8 +16,13 @@
 
     <tr>
       <td><a th:href="@{/chat}" class="btn btn-primary btn-sm mb-3">Check chat</a></td>
-      <td>You are here</td>
+      <td></td>
     </tr>
+
+    <!--    <tr>-->
+    <!--      <td><a th:href="@{/settings}" class="btn btn-primary btn-sm mb-3">Settings</a></td>-->
+    <!--      <td></td>-->
+    <!--    </tr>-->
 
     <tr>
       <td><a th:href="@{/git}" class="btn btn-primary btn-sm mb-3">Check work you your devops (Roy)</a></td>
@@ -25,14 +30,8 @@
     </tr>
 
     <tr>
-      <td><a th:href="@{/java}" class="btn btn-primary btn-sm mb-3">Check work of your Java junior (Moss)</a></td>
+      <td><a th:href="@{/dev}" class="btn btn-primary btn-sm mb-3">Check work of your junior dev (Moss)</a></td>
       <td th:text="${moss}"></td>
-    </tr>
-
-    <tr>
-      <td><a th:href="@{/python}" class="btn btn-primary btn-sm mb-3">Check work of your Python junior (Maurice)</a>
-      </td>
-      <td th:text="${maurice}"></td>
     </tr>
   </table>
 </div>

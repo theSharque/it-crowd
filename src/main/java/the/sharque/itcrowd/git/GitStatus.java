@@ -1,8 +1,5 @@
 package the.sharque.itcrowd.git;
 
 public enum GitStatus {
-    NEW,
-    READY,
-    IN_PROGRESS,
-    FAILED,
+    NEW, WAIT, IN_PROGRESS, READY, FAILED
 }

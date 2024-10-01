@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>IT-Crowd :: Functions</title>
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container my-2" style="align-content: center;width: 100%;">
+  <h3>Project List</h3>
+  <a th:href="@{/}" class="btn btn-primary btn-sm mb-3">Back to title</a>
+  <label for="language">Programming language</label>
+  <select id="language" th:onchange="'window.location.href=\''+@{/dev}+'/\'+this.value'">
+    <option th:selected="${value==language}" th:each="value:${T(the.sharque.itcrowd.devs.LanguageType).values()}"
+            th:value="${value}" th:text="${value}"></option>
+  </select>
+  <table style="width:90%;" class="table border-light table-striped table-responsive-md">
+    <thead>
+    <tr>
+      <th>Branch ID</th>
+      <th>Method name</th>
+      <th>Status</th>
+      <th>Action</th>
+      <th>Last change</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="function:${functions}">
+      <td th:text="${T(the.sharque.itcrowd.devs.JuniorDevService).ITCRWD+(function.getId())}"></td>
+      <td th:text="${function.getMethodName()}"></td>
+      <td th:text="${function.getStatus()}"></td>
+      <td><a th:href="@{/java/reset/{id}(id=${function.getId()})}" class="btn btn-secondary">Reset</a></td>
+      <td th:text="${function.getLastModified()}"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

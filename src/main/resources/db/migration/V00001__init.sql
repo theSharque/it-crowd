@@ -12,24 +12,11 @@ CREATE TABLE GITS
     last_modified timestamp not null default now()
 );
 
-CREATE TABLE JAVA_METHODS
+CREATE TABLE FUNCTIONS
 (
     id             serial PRIMARY KEY,
     git_id         bigint REFERENCES GITS (id),
-    file_location  varchar   not null,
-    method_name    varchar   not null,
-    original_body  varchar   not null,
-    hash           varchar   not null,
-    modified_body  varchar,
-    commit_message varchar,
-    status         varchar   not null,
-    last_modified  timestamp not null default now()
-);
-
-CREATE TABLE PYTHON_METHODS
-(
-    id             serial PRIMARY KEY,
-    git_id         bigint REFERENCES GITS (id),
+    language       varchar   not null,
     file_location  varchar   not null,
     method_name    varchar   not null,
     original_body  varchar   not null,
@@ -46,4 +33,15 @@ CREATE TABLE CHAT
     author    varchar   not null,
     message   varchar,
     timestamp timestamp not null default now()
-)
+);
+
+CREATE TABLE SETTINGS
+(
+    id  varchar,
+    val varchar
+);
+
+INSERT INTO SETTINGS (id, val)
+VALUES ('model', 'deepseek-coder-v2'),
+       ('Roy', 'active'),
+       ('Moss', 'active');
