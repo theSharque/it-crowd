@@ -12,6 +12,8 @@ Project starts like a Just For Fun pet-project :) This IT-crowd will work for yo
 * Check if it is applicable (just simple check changes)
 * Create new branch nad push it into your git..(..hub, ..lab, ..any)
 * All what you need is to create a PR/MR and review changes
+* Add settings
+* Add russian comment in commit
 
 ## Raw installation
 1. You need ollama instructions: https://ollama.com/download
@@ -44,8 +46,10 @@ Run in terminal:
 * Docker-compose module file
 
 ### Future plan:
-* Add QA junior unit-test writer
 * Support for JavaScript / TypeScript
+* Support ruby
+* Support C/C++
+* Add QA junior unit-test writer
 
 # Used:
 * https://github.com/ollama/ollama
