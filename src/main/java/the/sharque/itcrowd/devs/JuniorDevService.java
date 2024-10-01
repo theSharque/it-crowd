@@ -16,7 +16,9 @@ import org.springframework.ai.ollama.api.OllamaApi.Message;
 import org.springframework.ai.ollama.api.OllamaApi.Message.Role;
 import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 import the.sharque.itcrowd.chat.ChatService;
+import the.sharque.itcrowd.devs.ruby.RubyMethod;
 import the.sharque.itcrowd.git.GitRepository;
 import the.sharque.itcrowd.git.GitService;
 import the.sharque.itcrowd.git.GitStatus;
@@ -24,7 +26,7 @@ import the.sharque.itcrowd.git.GitStatus;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class JuniorDev {
+public class JuniorDevService {
 
     public static final String START_OPTIMIZE = "Hmmm... I think I can optimize this method %s";
     public static final String BAD_OPTIMIZE = "Something went wrong with %s, I think better rollback all this shit-code";

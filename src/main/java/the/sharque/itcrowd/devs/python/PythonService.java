@@ -1,6 +1,6 @@
 package the.sharque.itcrowd.devs.python;
 
-import static the.sharque.itcrowd.devs.JuniorDev.PYTHON_REQUEST;
+import static the.sharque.itcrowd.devs.JuniorDevService.PYTHON_REQUEST;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import the.sharque.itcrowd.chat.ChatService;
 import the.sharque.itcrowd.git.GitProject;
 import the.sharque.itcrowd.git.GitRepository;
 import the.sharque.itcrowd.git.GitStatus;
-import the.sharque.itcrowd.devs.JuniorDev;
+import the.sharque.itcrowd.devs.JuniorDevService;
 import the.sharque.itcrowd.devs.MethodsStatus;
 
 @Slf4j
@@ -39,16 +39,16 @@ public class PythonService {
     private final GitRepository gitRepository;
     private final PythonMethodsRepository pythonMethodsRepository;
     private final ChatService chatService;
-    private final JuniorDev juniorDev;
+    private final JuniorDevService juniorDevService;
 
     @Scheduled(fixedDelay = 60000)
     public void checkBody() {
-        juniorDev.getToWork(pythonMethodsRepository, PYTHON_REQUEST, AUTHOR);
+        juniorDevService.getToWork(pythonMethodsRepository, PYTHON_REQUEST, AUTHOR);
     }
 
     @Scheduled(fixedDelay = 10000)
     public void pushUpdate() {
-        juniorDev.pushChanges(pythonMethodsRepository);
+        juniorDevService.pushChanges(pythonMethodsRepository);
     }
 
     @Scheduled(fixedDelay = 10000)
