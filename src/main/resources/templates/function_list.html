@@ -29,7 +29,7 @@
       <td th:text="${T(the.sharque.itcrowd.devs.JuniorDevService).ITCRWD+(function.getId())}"></td>
       <td th:text="${function.getMethodName()}"></td>
       <td th:text="${function.getStatus()}"></td>
-      <td><a th:href="@{/java/reset/{id}(id=${function.getId()})}" class="btn btn-secondary">Reset</a></td>
+      <td><a th:href="@{/dev/reset/{id}(id=${function.getId()})}" class="btn btn-secondary">Run</a></td>
       <td th:text="${function.getLastModified()}"></td>
     </tr>
     </tbody>
