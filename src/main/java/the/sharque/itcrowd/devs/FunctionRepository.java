@@ -14,6 +14,9 @@ public interface FunctionRepository extends CrudRepository<FunctionModel, Long> 
     @Query("SELECT * FROM FUNCTIONS WHERE STATUS = :status ORDER BY LAST_MODIFIED LIMIT 1")
     Optional<FunctionModel> findByStatus(FunctionStatus status);
 
+    @Query("SELECT * FROM FUNCTIONS WHERE LANGUAGE = :language AND STATUS = :status ORDER BY LAST_MODIFIED LIMIT 1")
+    Optional<FunctionModel> findByStatusAndLanguage(FunctionStatus status, LanguageType language);
+
     @Query("SELECT * FROM FUNCTIONS ORDER BY LAST_MODIFIED")
     List<FunctionModel> findAllOrderByLastModifiedDesc();
 

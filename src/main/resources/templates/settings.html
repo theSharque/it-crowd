@@ -16,7 +16,8 @@
   <form th:action="@{/settings/update}" type="GET">
     <label for="Model">Model</label>
     <select id="Model" name="Model">
-      <option th:selected="${Model=='deepseek-coder-v2'}">deepseek-coder-v2</option>
+      <option th:selected="${Model=='deepseek-coder-v2:latest'}">deepseek-coder-v2:latest</option>
+      <option th:selected="${Model=='granite-code:8b'}">starcoder2:instruct</option>
     </select>
 
     <label for="Language">Language</label>

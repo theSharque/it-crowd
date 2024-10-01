@@ -42,12 +42,7 @@ public class PythonService extends JuniorDevService {
     @Scheduled(fixedDelay = 60000)
     public void checkBody() {
         String lang = settingsService.getValue("Language", "English");
-        getToWork(PYTHON_REQUEST.get(lang), AUTHOR);
-    }
-
-    @Scheduled(fixedDelay = 10000)
-    public void pushUpdate() {
-        pushChanges();
+        getToWork(MODULE_LANGUAGE, PYTHON_REQUEST.get(lang), AUTHOR);
     }
 
     @Scheduled(fixedDelay = 10000)

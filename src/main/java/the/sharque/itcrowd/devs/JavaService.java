@@ -44,16 +44,10 @@ public class JavaService extends JuniorDevService {
         super(ollamaApi, gitService, settingsService, chatService, gitRepository, functionRepository);
     }
 
-
     @Scheduled(fixedDelay = 60000)
     public void checkBody() {
         String lang = settingsService.getValue("Language", "English");
-        getToWork(JAVA_REQUEST.get(lang), AUTHOR);
-    }
-
-    @Scheduled(fixedDelay = 10000)
-    public void pushUpdate() {
-        pushChanges();
+        getToWork(MODULE_LANGUAGE, JAVA_REQUEST.get(lang), AUTHOR);
     }
 
     @Scheduled(fixedDelay = 10000)

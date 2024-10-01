@@ -19,6 +19,7 @@ import org.springframework.ai.ollama.api.OllamaApi.ChatResponse;
 import org.springframework.ai.ollama.api.OllamaApi.Message;
 import org.springframework.ai.ollama.api.OllamaApi.Message.Role;
 import org.springframework.ai.ollama.api.OllamaOptions;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.DigestUtils;
 import the.sharque.itcrowd.chat.ChatService;
 import the.sharque.itcrowd.git.GitProject;
@@ -52,8 +53,8 @@ public abstract class JuniorDevService {
     protected final GitRepository gitRepository;
     protected final FunctionRepository functionRepository;
 
-    public void getToWork(String type, String author) {
-        functionRepository.findByStatus(FunctionStatus.NEW).ifPresent(methodObject -> {
+    public void getToWork(LanguageType languageType, String type, String author) {
+        functionRepository.findByStatusAndLanguage(FunctionStatus.NEW, languageType).ifPresent(methodObject -> {
             methodObject.setStatus(FunctionStatus.IN_PROGRESS);
             methodObject.setLastModified(LocalDateTime.now());
             functionRepository.save(methodObject);
@@ -100,7 +101,8 @@ public abstract class JuniorDevService {
     }
 
     private String askJunior(FunctionModel functionModel, String type) {
-        ChatRequest request = ChatRequest.builder("deepseek-coder-v2")
+        String modelName = settingsService.getValue("Model", "deepseek-coder-v2");
+        ChatRequest request = ChatRequest.builder(modelName)
                 .withStream(false)
                 .withMessages(List.of(
                         Message.builder(Role.SYSTEM).withContent(type).build(),
@@ -123,6 +125,7 @@ public abstract class JuniorDevService {
         return null;
     }
 
+    @Scheduled(fixedDelay = 10000)
     public void pushChanges() {
         functionRepository.findByStatus(FunctionStatus.OPTIMIZED).ifPresent(methodObject -> {
             methodObject.setStatus(FunctionStatus.IN_PROGRESS);
