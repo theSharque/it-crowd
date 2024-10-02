@@ -48,6 +48,7 @@ Run in terminal:
 * Docker-compose module file
 * Temperature settings
 * Automatic pull model if not exists
+* Add more applicable model to the list
 
 ### Future plan:
 * Support for JavaScript / TypeScript
