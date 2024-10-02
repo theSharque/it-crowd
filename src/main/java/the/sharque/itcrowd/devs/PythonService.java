@@ -18,6 +18,7 @@ import the.sharque.itcrowd.chat.ChatService;
 import the.sharque.itcrowd.git.GitProject;
 import the.sharque.itcrowd.git.GitRepository;
 import the.sharque.itcrowd.git.GitService;
+import the.sharque.itcrowd.ollama.OllamaModelService;
 import the.sharque.itcrowd.settings.SettingsService;
 
 @Slf4j
@@ -32,10 +33,12 @@ public class PythonService extends JuniorDevService {
 
     private final Pattern FUNCTION = Pattern.compile(".*?def +(?<name>.*?\\)) *?:", Pattern.DOTALL);
 
-    public PythonService(OllamaApi ollamaApi, GitService gitService,
+    public PythonService(OllamaApi ollamaApi,
+            GitService gitService, OllamaModelService ollamaModelService,
             SettingsService settingsService, ChatService chatService,
             GitRepository gitRepository, FunctionRepository functionRepository) {
-        super(ollamaApi, gitService, settingsService, chatService, gitRepository, functionRepository);
+        super(ollamaApi, gitService, ollamaModelService, settingsService, chatService, gitRepository,
+                functionRepository);
     }
 
 

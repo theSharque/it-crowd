@@ -19,6 +19,7 @@ import the.sharque.itcrowd.chat.ChatService;
 import the.sharque.itcrowd.git.GitProject;
 import the.sharque.itcrowd.git.GitRepository;
 import the.sharque.itcrowd.git.GitService;
+import the.sharque.itcrowd.ollama.OllamaModelService;
 import the.sharque.itcrowd.settings.SettingsService;
 
 @Slf4j
@@ -38,10 +39,11 @@ public class JavaService extends JuniorDevService {
             Pattern.DOTALL);
     private final Pattern CLEAN_BODY = Pattern.compile("(?<body>.*}\\n?)");
 
-    public JavaService(OllamaApi ollamaApi, GitService gitService, SettingsService settingsService,
-            ChatService chatService,
-            GitRepository gitRepository, FunctionRepository functionRepository) {
-        super(ollamaApi, gitService, settingsService, chatService, gitRepository, functionRepository);
+    public JavaService(OllamaApi ollamaApi, GitService gitService, OllamaModelService ollamaModelService,
+            SettingsService settingsService, ChatService chatService, GitRepository gitRepository,
+            FunctionRepository functionRepository) {
+        super(ollamaApi, gitService, ollamaModelService, settingsService, chatService, gitRepository,
+                functionRepository);
     }
 
     @Scheduled(fixedDelay = 60000)

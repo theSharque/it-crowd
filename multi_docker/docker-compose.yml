@@ -1,39 +1,26 @@
 version: "3.9"
 services:
   ollama:
-    container_name: ollama
-    build:
-      context: .
-      dockerfile: Dockerfile_ollama
-    restart: always
-    volumes:
-      - ollama_models:/usr/share/ollama/.ollama
+    restart: unless-stopped
+    image: ollama/ollama
     networks:
       - it-crowd
 
   it-crowd:
+    restart: unless-stopped
     container_name: it-crowd
+    depends_on:
+      - ollama
     build:
       context: ../
       dockerfile: multi_docker/Dockerfile_crowd
-    restart: always
     environment:
       OLLAMA_URL: http://ollama:11434
     ports:
       - "8080:8080"
-    volumes:
-      - db:/db
     networks:
       - it-crowd
-    depends_on:
-      - ollama
 
 networks:
   it-crowd:
     driver: bridge
-
-volumes:
-  ollama_models:
-    external: false
-  db:
-    external: false

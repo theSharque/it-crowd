@@ -16,25 +16,26 @@ Project starts like a Just For Fun pet-project :) This IT-crowd will work for yo
 * Add russian comment in commit
 * Add temperature param to settings (0 - clear code, 5 - crazy idea code)
 
-## Raw installation
+
+# Please wait for the model to pull complete before after run! IT TAKES A TIME! Check logs or chat messages from Moss
+
+## Raw locally
 1. You need ollama instructions: https://ollama.com/download
-2. Pull deepseek-coder-v2 use command `ollama pull deepseek-coder-v2:latest`
-3. You need Java-17
+2. Pull deepseek-coder-v2 consider: `ollama pull deepseek-coder-v2:latest`
+3. You need a Java-17
 4. Build `./gradlew bootJar`
 5. Run the code `java -jar ./build/libs/it-crowd-0.0.1-SNAPSHOT.jar`
 
 ## Docker run
-Please wait for model pull before use! IT TAKES TIME!
-
 Run in terminal:
-* `docker build . --tag=it-crowd`
-* `docker container run -p 8080:8080 it-crowds`
+1. `./gradlew bootJar`
+2. `docker build . --tag=it-crowd`
+3. `docker container run -p 8080:8080 it-crowds`
 
 ## Docker-compose run
-Please wait for model pull before use! IT TAKES TIME!
-
 Run in terminal:
-* `docker-compose up -d`
+1. `./gradlew bootJar`
+2. `docker-compose up -d`
 
 ### Currently available modules:
 * Project (git) module - allow to download source code from remote GIT
@@ -45,10 +46,10 @@ Run in terminal:
 * Push branch to review
 * Single-installation dockerfile
 * Docker-compose module file
-* Temperature
+* Temperature settings
+* Automatic pull model if not exists
 
 ### Future plan:
-* Automatic pull model if not exists
 * Support for JavaScript / TypeScript
 * Support ruby
 * Support C/C++

@@ -1,7 +1,0 @@
-FROM ollama/ollama:latest
-
-COPY run_in_compose.sh run_in_compose.sh
-RUN chmod 777 ./run_in_compose.sh
-
-ENTRYPOINT ./run_in_compose.sh
-EXPOSE 11434

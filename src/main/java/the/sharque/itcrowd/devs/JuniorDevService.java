@@ -26,6 +26,7 @@ import the.sharque.itcrowd.git.GitProject;
 import the.sharque.itcrowd.git.GitRepository;
 import the.sharque.itcrowd.git.GitService;
 import the.sharque.itcrowd.git.GitStatus;
+import the.sharque.itcrowd.ollama.OllamaModelService;
 import the.sharque.itcrowd.settings.SettingsService;
 
 @Slf4j
@@ -48,6 +49,7 @@ public abstract class JuniorDevService {
 
     private final OllamaApi ollamaApi;
     private final GitService gitService;
+    private final OllamaModelService ollamaModelService;
     protected final SettingsService settingsService;
     protected final ChatService chatService;
     protected final GitRepository gitRepository;
@@ -101,6 +103,10 @@ public abstract class JuniorDevService {
     }
 
     private String askJunior(FunctionModel functionModel, String type) {
+        if (ollamaModelService.ollamaDisabled.get()) {
+            return null;
+        }
+
         String modelName = settingsService.getValue("Model", "deepseek-coder-v2");
         Float temperature = Float.valueOf(settingsService.getValue("Temperature", "0.0"));
 
@@ -233,8 +239,4 @@ public abstract class JuniorDevService {
     }
 
     protected abstract Map<String, String> detectFunctions(String fileName);
-
-    public List<FunctionModel> getFunctions() {
-        return functionRepository.findAllOrderByLastModifiedDesc();
-    }
 }
