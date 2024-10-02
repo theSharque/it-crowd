@@ -102,12 +102,14 @@ public abstract class JuniorDevService {
 
     private String askJunior(FunctionModel functionModel, String type) {
         String modelName = settingsService.getValue("Model", "deepseek-coder-v2");
+        Float temperature = Float.valueOf(settingsService.getValue("Temperature", "0.0"));
+
         ChatRequest request = ChatRequest.builder(modelName)
                 .withStream(false)
                 .withMessages(List.of(
                         Message.builder(Role.SYSTEM).withContent(type).build(),
                         Message.builder(Role.USER).withContent(functionModel.getOriginalBody()).build()))
-                .withOptions(OllamaOptions.create().withTemperature(0.5f))
+                .withOptions(OllamaOptions.create().withTemperature(temperature))
                 .build();
 
         try {

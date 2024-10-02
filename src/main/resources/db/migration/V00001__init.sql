@@ -43,6 +43,7 @@ CREATE TABLE SETTINGS
 
 INSERT INTO SETTINGS (id, val)
 VALUES ('Model', 'deepseek-coder-v2'),
+       ('Temperature', '0.0'),
        ('Language', 'english'),
        ('Roy', 'active'),
        ('Moss', 'active');

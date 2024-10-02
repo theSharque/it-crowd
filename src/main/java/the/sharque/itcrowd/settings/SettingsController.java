@@ -21,10 +21,13 @@ public class SettingsController {
 
     @GetMapping("/settings/update")
     public String index(@RequestParam("Model") String model,
+            @RequestParam("Temperature") String temperature,
             @RequestParam("Language") String language,
             @RequestParam("Roy") String roy,
             @RequestParam("Moss") String moss) {
+
         settingsService.updateValue("Model", model);
+        settingsService.updateValue("Temperature", temperature);
         settingsService.updateValue("Language", language);
         settingsService.updateValue("Roy", roy);
         settingsService.updateValue("Moss", moss);
