@@ -14,6 +14,7 @@ Project starts like a Just For Fun pet-project :) This IT-crowd will work for yo
 * All what you need is to create a PR/MR and review changes
 * Add settings
 * Add russian comment in commit
+* Add temperature param to settings (0 - clear code, 5 - crazy idea code)
 
 ## Raw installation
 1. You need ollama instructions: https://ollama.com/download
@@ -44,8 +45,10 @@ Run in terminal:
 * Push branch to review
 * Single-installation dockerfile
 * Docker-compose module file
+* Temperature
 
 ### Future plan:
+* Automatic pull model if not exists
 * Support for JavaScript / TypeScript
 * Support ruby
 * Support C/C++
