@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'maven-publish'
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
     id 'org.graalvm.buildtools.native' version '0.10.3'
@@ -52,4 +53,17 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+publishing {
+  repositories {
+    maven {
+      name = "it-crowd"
+      url = "https://maven.pkg.github.com/theSharque/it-crowd"
+      credentials {
+        username = System.getenv("GITHUB_ACTOR")
+        password = System.getenv("GITHUB_TOKEN")
+      }
+    }
+  }
 }
